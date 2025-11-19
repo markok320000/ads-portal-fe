@@ -46,7 +46,8 @@ export function useCampaignCreator() {
             isValid = false;
         }
 
-        if (!details.text.trim()) {
+        // Only require text if it is a text ad
+        if (adType === 'text' && !details.text.trim()) {
             newErrors.text = 'Ad text content is required';
             isValid = false;
         }

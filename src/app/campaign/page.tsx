@@ -5,6 +5,7 @@ import { ClickableStepper } from "@/components/clickable-stepper";
 import { useCampaignCreator } from "@/hooks/use-campaign-creator";
 import { AD_OPTIONS } from "@/constants/ad-options";
 import CampaignConfiguration from "@/app/campaign/components/campaign-configuration";
+import StripePayment from "@/app/campaign/components/stripe-payment";
 
 export default function Page() {
     const {
@@ -63,9 +64,13 @@ export default function Page() {
                     )}
 
                     {currentStep === 2 && (
-                        <div className="text-center p-12 border border-dashed border-slate-300 rounded-xl">
-                            <h2 className="text-xl font-bold text-slate-700">Payment</h2>
-                            <p className="text-slate-500">Stripe integration goes here...</p>
+                        <div className="w-full max-w-md mx-auto">
+                            <StripePayment
+                                details={details}
+                                adType={adType}
+                                adOption={adOptions.find(opt => opt.id === adType)!}
+                                onBack={prevStep}
+                            />
                         </div>
                     )}
                 </div>

@@ -4,6 +4,9 @@ import { Slider } from "@/components/ui/slider";
 import { AdOption } from "@/models/AdOption";
 import { CampaignDetails } from "@/hooks/use-campaign-creator";
 import { useMemo } from "react";
+import { calculateAdCost } from "@/utils/pricing-utils";
+import { Info } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface CostEstimationCardProps {
     details: CampaignDetails;
@@ -17,11 +20,11 @@ export default function CostEstimationCard({
     currentOption
 }: CostEstimationCardProps) {
 
-    const viewsCost = useMemo(() => {
-        return (details.views / 1000) * currentOption.pricePerMille;
-    }, [details.views, currentOption]);
+    const pricingData = useMemo(() => {
+        return calculateAdCost(currentOption.id, details.text.length, details.views);
+    }, [details.views, details.text.length, currentOption.id]);
 
-    const totalEstimate = viewsCost;
+    const { totalCost, baseCPM, textCPM, totalCPM } = pricingData;
 
     return (
         <Card className="border-slate-200 shadow-sm h-full">
@@ -57,9 +60,36 @@ export default function CostEstimationCard({
 
                     {/* Cost Breakdown */}
                     <div className="space-y-3 text-sm">
+                        {currentOption.id !== 'text' && baseCPM > 0 && (
+                            <div className="flex justify-between items-center">
+                                <span className="text-slate-600">Base CPM ({currentOption.id})</span>
+                                <span className="font-medium text-slate-900">${baseCPM.toFixed(2)}</span>
+                            </div>
+                        )}
+                        {textCPM > 0 && (
+                            <div className="flex justify-between items-center">
+                                <div className="flex items-center gap-1">
+                                    <span className="text-slate-600">Text CPM ({details.text.length} chars)</span>
+                                    <Tooltip>
+                                        <TooltipTrigger>
+                                            <Info className="w-3 h-3 text-slate-400 hover:text-slate-600 cursor-help" />
+                                        </TooltipTrigger>
+                                        <TooltipContent>
+                                            <div className="text-xs space-y-1">
+                                                <p className="font-semibold">Text Pricing Tiers:</p>
+                                                <p>0-125 chars: $10 CPM</p>
+                                                <p>126-250 chars: $15 CPM</p>
+                                                <p>251-500 chars: $20 CPM</p>
+                                            </div>
+                                        </TooltipContent>
+                                    </Tooltip>
+                                </div>
+                                <span className="font-medium text-slate-900">${textCPM.toFixed(2)}</span>
+                            </div>
+                        )}
                         <div className="flex justify-between items-center">
-                            <span className="text-slate-600">Price per 1k views (CPM)</span>
-                            <span className="font-medium text-slate-900">${currentOption.pricePerMille.toFixed(2)}</span>
+                            <span className="text-slate-600">Total CPM</span>
+                            <span className="font-medium text-slate-900">${totalCPM.toFixed(2)}</span>
                         </div>
                         <div className="flex justify-between items-center">
                             <span className="text-slate-600">Total Views</span>
@@ -73,7 +103,7 @@ export default function CostEstimationCard({
                     <div className="flex items-center justify-between">
                         <span className="text-base font-bold text-slate-900">Total Estimate</span>
                         <span className="text-3xl font-bold text-blue-600">
-                            ${totalEstimate.toFixed(2)}
+                            ${totalCost.toFixed(2)}
                         </span>
                     </div>
                 </div>

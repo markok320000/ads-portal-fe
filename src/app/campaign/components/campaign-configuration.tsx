@@ -15,6 +15,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { ActionButton } from "@/components/ui/action-button";
 import CostEstimationCard from "./cost-estimation-card";
+import { MAX_CHAR_COUNT } from "@/utils/pricing-utils";
 
 interface CampaignConfigurationProps {
     adType: AdType;
@@ -118,13 +119,21 @@ export default function CampaignConfiguration({
 
                             {/* Text Content */}
                             <div className="space-y-2">
-                                <Label htmlFor="ad-text" className="text-sm font-semibold text-slate-700">Ad Text Content</Label>
+                                <div className="flex justify-between items-center">
+                                    <Label htmlFor="ad-text" className="text-sm font-semibold text-slate-700">
+                                        Ad Text Content {adType !== 'text' && <span className="text-slate-400 font-normal">(Optional)</span>}
+                                    </Label>
+                                    <span className={`text-xs ${details.text.length >= MAX_CHAR_COUNT ? 'text-red-500 font-bold' : 'text-slate-400'}`}>
+                                        {details.text.length}/{MAX_CHAR_COUNT}
+                                    </span>
+                                </div>
                                 <Textarea
                                     id="ad-text"
                                     value={details.text}
                                     onChange={(e) => setDetails(prev => ({ ...prev, text: e.target.value }))}
                                     placeholder="Enter the primary text for your advertisement..."
                                     rows={4}
+                                    maxLength={MAX_CHAR_COUNT}
                                     className={`resize-none ${errors.text ? 'border-red-300 focus-visible:ring-red-200' : 'border-slate-200 focus-visible:ring-indigo-200'}`}
                                 />
                                 {errors.text && (

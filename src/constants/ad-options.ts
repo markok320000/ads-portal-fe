@@ -5,26 +5,38 @@ export const AD_OPTIONS: AdOption[] = [
     {
         id: 'text',
         title: 'Text Advertisement',
-        description: 'High-intent focus. Best for search results and sidebar placements where reading is priority.',
-        pricePerMille: 4.50,
+        description:
+            'Basic text-only ad. Ideal for short written messages, announcements, or simple promotional lines. Pure text format - no images.',
+        pricePerMille: 10.0,
         icon: Type,
-        features: ['Headline (30 chars)', 'Description (90 chars)', 'Click-through URL']
+        features: [
+            'Click-through URL',
+            'Text-only format'
+        ]
     },
     {
         id: 'photo',
         title: 'Display / Photo Ad',
-        description: 'Visual engagement. Ideal for feed interruptions and banner placements to build brand awareness.',
-        pricePerMille: 8.75,
+        description:
+            'High-visibility visual ad format for banners, feeds, or promotional sections. Best for brand impressions and clean visual impact.',
+        pricePerMille: 30.0,
         icon: ImageIcon,
-        features: ['1080x1080 or 16:9', 'PNG/JPG Support', 'Visual Call-to-Action']
+        features: [
+            'PNG/JPG support',
+            'Combine with Text (optional)'
+        ]
     },
     {
         id: 'video',
         title: 'Video Commercial',
-        description: 'Maximum conversion. Immersive storytelling for pre-roll or in-feed autoplay placements.',
-        pricePerMille: 15.00,
+        description:
+            'Premium video placement engineered for strong engagement and high conversion rates. Great for storytelling, demonstrations, and brand showcases.',
+        pricePerMille: 55.0,
         icon: Play,
         recommended: true,
-        features: ['Up to 30 seconds', 'Auto-play enabled', 'Sound-on optional']
+        features: [
+            'Best for high conversion campaigns',
+            'Combine with Text (optional)'
+        ]
     }
 ];
