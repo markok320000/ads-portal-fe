@@ -1,4 +1,4 @@
-import {AdType} from "@/models/adType";
+import { AdType } from "@/models/adType";
 
 export interface AdOption {
     id: AdType;

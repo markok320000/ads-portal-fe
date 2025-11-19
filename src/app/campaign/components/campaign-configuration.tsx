@@ -14,6 +14,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { ActionButton } from "@/components/ui/action-button";
+import CostEstimationCard from "./cost-estimation-card";
 
 interface CampaignConfigurationProps {
     adType: AdType;
@@ -193,50 +194,16 @@ export default function CampaignConfiguration({
                                 </div>
                             )}
 
-                            {/* Views Slider */}
-                            <div className="space-y-6 pt-4 border-t border-slate-100">
-                                <div className="flex items-center justify-between">
-                                    <Label className="text-sm font-semibold text-slate-700">Target Views</Label>
-                                    <span className="text-2xl font-bold text-indigo-600">
-                                        {details.views.toLocaleString()}
-                                    </span>
-                                </div>
-                                <Slider
-                                    defaultValue={[details.views]}
-                                    max={1000000}
-                                    min={1000}
-                                    step={1000}
-                                    onValueChange={(vals) => setDetails(prev => ({ ...prev, views: vals[0] }))}
-                                    className="py-4"
-                                />
-                            </div>
+                            {/* Views Slider removed from here */}
                         </div>
 
                         {/* Right Column: Pricing Summary */}
-                        <div className="lg:col-span-1 flex flex-col justify-end">
-                            <div className="bg-slate-900 rounded-xl p-6 text-white">
-                                <div className="flex items-center justify-between mb-4">
-                                    <div className="flex items-center gap-2">
-                                        <span className="text-slate-400">Price per 1,000 views (CPM)</span>
-                                        <Tooltip>
-                                            <TooltipTrigger>
-                                                <Info className="w-4 h-4 text-slate-500 hover:text-slate-300 transition-colors" />
-                                            </TooltipTrigger>
-                                            <TooltipContent>
-                                                <p className="max-w-xs">Cost Per Mille (CPM) is the cost for every 1,000 views of your advertisement.</p>
-                                            </TooltipContent>
-                                        </Tooltip>
-                                    </div>
-                                    <span className="font-medium">${currentOption.pricePerMille.toFixed(2)}</span>
-                                </div>
-                                <div className="h-px bg-slate-800 my-4" />
-                                <div className="flex items-center justify-between text-lg">
-                                    <span className="font-semibold">Total Estimated Cost</span>
-                                    <span className="font-bold text-2xl text-indigo-300">
-                                        ${totalPrice.toFixed(2)}
-                                    </span>
-                                </div>
-                            </div>
+                        <div className="lg:col-span-1">
+                            <CostEstimationCard
+                                details={details}
+                                setDetails={setDetails}
+                                currentOption={currentOption}
+                            />
                         </div>
                     </div>
                 </CardContent>
