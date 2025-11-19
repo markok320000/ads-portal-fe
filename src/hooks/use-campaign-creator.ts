@@ -1,5 +1,20 @@
-import {useState} from "react";
-import {AdType} from "@/models/adType";
+import { useState } from "react";
+import { AdType } from "@/models/adType";
+import { AD_OPTIONS } from "@/constants/ad-options";
+
+export interface CampaignDetails {
+    name: string;
+    text: string;
+    media: File | null;
+    mediaUrl: string | null;
+    views: number;
+}
+
+export interface ValidationErrors {
+    name?: string;
+    text?: string;
+    media?: string;
+}
 
 export function useCampaignCreator() {
     // 1. Stepper State
@@ -7,7 +22,14 @@ export function useCampaignCreator() {
 
     // 2. Data State
     const [adType, setAdType] = useState<AdType>('photo');
-    const [selectedDetails, setSelectedDetails] = useState<any>({});
+    const [details, setDetails] = useState<CampaignDetails>({
+        name: '',
+        text: '',
+        media: null,
+        mediaUrl: null,
+        views: 1000
+    });
+    const [errors, setErrors] = useState<ValidationErrors>({});
 
     // --- Logic Actions ---
 
@@ -15,8 +37,38 @@ export function useCampaignCreator() {
         setCurrentStep(step);
     };
 
+    const validateConfiguration = (): boolean => {
+        const newErrors: ValidationErrors = {};
+        let isValid = true;
+
+        if (!details.name.trim()) {
+            newErrors.name = 'Campaign name is required';
+            isValid = false;
+        }
+
+        if (!details.text.trim()) {
+            newErrors.text = 'Ad text content is required';
+            isValid = false;
+        }
+
+        // Only require media if NOT a text ad
+        if (adType !== 'text' && !details.media && !details.mediaUrl) {
+            newErrors.media = 'Media (photo or video) is required';
+            isValid = false;
+        }
+
+        setErrors(newErrors);
+        return isValid;
+    };
+
     const nextStep = () => {
-        setCurrentStep((prev) => prev + 1);
+        if (currentStep === 1) {
+            if (validateConfiguration()) {
+                setCurrentStep((prev) => prev + 1);
+            }
+        } else {
+            setCurrentStep((prev) => prev + 1);
+        }
     };
 
     const prevStep = () => {
@@ -29,7 +81,15 @@ export function useCampaignCreator() {
         // This prevents accidental data wiping if they click the same card twice
         if (type !== adType) {
             setAdType(type);
-            setSelectedDetails({}); // Reset form data on type change
+            // Reset details but keep default views
+            setDetails(prev => ({
+                ...prev,
+                name: '',
+                text: '',
+                media: null,
+                mediaUrl: null
+            }));
+            setErrors({});
         }
     };
 
@@ -37,13 +97,16 @@ export function useCampaignCreator() {
         // State
         currentStep,
         adType,
-        selectedDetails,
+        details,
+        errors,
+        adOptions: AD_OPTIONS,
 
         // Actions
         goToStep,
         nextStep,
         prevStep,
         setAdType: selectAdType,
-        setSelectedDetails
+        setDetails,
+        setErrors
     };
 }

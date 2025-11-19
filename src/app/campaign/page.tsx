@@ -1,8 +1,10 @@
 'use client';
-import {SiteHeader} from "@/components/site-header"
+import { SiteHeader } from "@/components/site-header"
 import AdCampaignSelector from "@/app/campaign/components/ad-campaign-selector";
-import {ClickableStepper} from "@/components/clickable-stepper";
-import {useCampaignCreator} from "@/hooks/use-campaign-creator";
+import { ClickableStepper } from "@/components/clickable-stepper";
+import { useCampaignCreator } from "@/hooks/use-campaign-creator";
+import { AD_OPTIONS } from "@/constants/ad-options";
+import CampaignConfiguration from "@/app/campaign/components/campaign-configuration";
 
 export default function Page() {
     const {
@@ -10,7 +12,12 @@ export default function Page() {
         goToStep,
         nextStep,
         adType,
-        setAdType
+        setAdType,
+        details,
+        setDetails,
+        errors,
+        adOptions,
+        prevStep
     } = useCampaignCreator();
 
     const STEPS = ['Select Type', 'Configure', 'Payment'];
@@ -28,27 +35,31 @@ export default function Page() {
                 <ClickableStepper
                     steps={STEPS}
                     currentStep={currentStep}
-                    onStepChange={goToStep}
+                    onStepChange={() => { }}
                 />
 
                 {/* Step 0: Ad Type Selection */}
                 <div className="mt-6 w-full">
                     {currentStep === 0 && (
                         <AdCampaignSelector
+                            adOptions={AD_OPTIONS}
                             selectedAd={adType}
                             onSelect={setAdType}
                             onNext={nextStep}
                         />
                     )}
 
-                    {/* Example placeholders for future steps */}
+                    {/* Step 1: Configuration */}
                     {currentStep === 1 && (
-                        <div className="text-center p-12 border border-dashed border-slate-300 rounded-xl">
-                            <h2 className="text-xl font-bold text-slate-700">Configuration for {adType}</h2>
-                            <p className="text-slate-500">Form inputs go here...</p>
-                            <button onClick={nextStep} className="mt-4 bg-slate-900 text-white px-4 py-2 rounded">Next
-                            </button>
-                        </div>
+                        <CampaignConfiguration
+                            adType={adType}
+                            details={details}
+                            setDetails={setDetails}
+                            errors={errors}
+                            onNext={nextStep}
+                            onBack={prevStep}
+                            adOptions={adOptions}
+                        />
                     )}
 
                     {currentStep === 2 && (
