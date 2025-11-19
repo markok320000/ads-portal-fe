@@ -1,40 +1,26 @@
-import { AppSidebar } from "@/components/app-sidebar"
-import { ChartAreaInteractive } from "@/components/chart-area-interactive"
-import { DataTable } from "@/components/data-table"
-import { SectionCards } from "@/components/section-cards"
-import { SiteHeader } from "@/components/site-header"
-import {
-  SidebarInset,
-  SidebarProvider,
-} from "@/components/ui/sidebar"
+import {ChartAreaInteractive} from "@/components/chart-area-interactive"
+import {AdsTable} from "@/components/ads-table"
+import {SectionCards} from "@/components/section-cards"
+import {SiteHeader} from "@/components/site-header"
 
-import data from "./data.json"
+import ads from "./ads.json"
 
 export default function Page() {
-  return (
-    <SidebarProvider
-      style={
-        {
-          "--sidebar-width": "calc(var(--spacing) * 72)",
-          "--header-height": "calc(var(--spacing) * 12)",
-        } as React.CSSProperties
-      }
-    >
-      <AppSidebar variant="inset" />
-      <SidebarInset>
-        <SiteHeader />
+    return (<div>
+        <SiteHeader title={'Dashboard'} description={'Overview of you ads performance'}/>
         <div className="flex flex-1 flex-col">
-          <div className="@container/main flex flex-1 flex-col gap-2">
-            <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
-              <SectionCards />
-              <div className="px-4 lg:px-6">
-                <ChartAreaInteractive />
-              </div>
-              <DataTable data={data} />
+            <div className="@container/main flex flex-1 flex-col gap-2">
+                <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
+                    <SectionCards/>
+                    <div className="px-4 lg:px-6">
+                        <ChartAreaInteractive/>
+                    </div>
+                    <div className="px-4 lg:px-6">
+                        <h2 className="text-xl font-semibold mb-3">Running ads</h2>
+                        <AdsTable ads={ads}/>
+                    </div>
+                </div>
             </div>
-          </div>
         </div>
-      </SidebarInset>
-    </SidebarProvider>
-  )
+    </div>)
 }

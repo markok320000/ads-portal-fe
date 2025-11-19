@@ -1,12 +1,14 @@
 [
   {
     "id": 1,
-    "header": "Cover page",
-    "type": "Cover page",
-    "status": "In Process",
-    "target": "18",
-    "limit": "5",
-    "reviewer": "Eddie Lake"
+    "title": "Winter Sale - Text Ad",
+    "adType": "text",
+    "viewsBought": 1000,
+    "price": 5.0,
+    "totalPricePaid": 5.0,
+    "purchaseDate": "2025-11-01",
+    "startDate": "2025-11-05",
+    "approvalState": "running"
   },
   {
     "id": 2,
