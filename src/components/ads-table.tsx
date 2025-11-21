@@ -2,6 +2,7 @@
 
 import * as React from "react"
 import { Badge } from "@/components/ui/badge"
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import {
     Table,
     TableBody,
@@ -17,12 +18,19 @@ import { ArrowUpDown, X } from "lucide-react";
 
 interface AdsTableProps {
     ads: AdItem[]
-    status: string | null
-    type: string | null
-    sort: string
-    onStatusChange: (value: string | null) => void
-    onTypeChange: (value: string | null) => void
-    onSortChange: (value: string) => void
+    status?: string | null
+    type?: string | null
+    sort?: string
+    onStatusChange?: (value: string | null) => void
+    onTypeChange?: (value: string | null) => void
+    onSortChange?: (value: string) => void
+    counts?: {
+        all: number
+        running: number
+        pending: number
+        completed: number
+        rejected: number
+    }
 }
 
 export function AdsTable({
@@ -32,7 +40,8 @@ export function AdsTable({
     sort,
     onStatusChange,
     onTypeChange,
-    onSortChange
+    onSortChange,
+    counts
 }: AdsTableProps) {
 
     const getStatusVariant = (status: AdApprovalState) => {
@@ -60,6 +69,7 @@ export function AdsTable({
     }
 
     const toggleSort = () => {
+        if (!onSortChange || !sort) return
         const [field, order] = sort.split(",")
         if (field === "purchaseDate") {
             onSortChange(`purchaseDate,${order === "asc" ? "desc" : "asc"}`)
@@ -69,57 +79,79 @@ export function AdsTable({
     }
 
     const clearFilters = () => {
-        onStatusChange(null)
-        onTypeChange(null)
+        if (onStatusChange) onStatusChange(null)
+        if (onTypeChange) onTypeChange(null)
     }
 
     const hasFilters = status !== null || type !== null
+    const showFilters = !!onStatusChange && !!onTypeChange
 
     return (
         <div className="space-y-4">
-            <div className="flex flex-wrap items-center gap-2">
-                <Select
+            {showFilters && (
+                <Tabs
+                    defaultValue="all"
                     value={status || "all"}
-                    onValueChange={(val) => onStatusChange(val === "all" ? null : val)}
+                    onValueChange={(val) => onStatusChange?.(val === "all" ? null : val)}
+                    className="w-full"
                 >
-                    <SelectTrigger className="w-[150px]">
-                        <SelectValue placeholder="Filter by Status" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectItem value="all">All Statuses</SelectItem>
-                        <SelectItem value="running">Running</SelectItem>
-                        <SelectItem value="pending">Pending</SelectItem>
-                        <SelectItem value="rejected">Rejected</SelectItem>
-                        <SelectItem value="completed">Completed</SelectItem>
-                    </SelectContent>
-                </Select>
+                    <div className="flex flex-wrap items-center justify-between gap-2">
+                        {/* Mobile Status Filter */}
+                        <Select
+                            value={status || "all"}
+                            onValueChange={(val) => onStatusChange?.(val === "all" ? null : val)}
+                        >
+                            <SelectTrigger className="w-[150px] lg:hidden">
+                                <SelectValue placeholder="Filter by Status" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="all">All Statuses ({counts?.all || 0})</SelectItem>
+                                <SelectItem value="running">Running ({counts?.running || 0})</SelectItem>
+                                <SelectItem value="pending">Pending ({counts?.pending || 0})</SelectItem>
+                                <SelectItem value="rejected">Rejected ({counts?.rejected || 0})</SelectItem>
+                                <SelectItem value="completed">Completed ({counts?.completed || 0})</SelectItem>
+                            </SelectContent>
+                        </Select>
 
-                <Select
-                    value={type || "all"}
-                    onValueChange={(val) => onTypeChange(val === "all" ? null : val)}
-                >
-                    <SelectTrigger className="w-[150px]">
-                        <SelectValue placeholder="Filter by Type" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectItem value="all">All Types</SelectItem>
-                        <SelectItem value="text">Text</SelectItem>
-                        <SelectItem value="photo">Photo</SelectItem>
-                        <SelectItem value="video">Video</SelectItem>
-                    </SelectContent>
-                </Select>
+                        {/* Desktop Status Filter (Tabs) */}
+                        <TabsList className="hidden lg:flex h-9">
+                            <TabsTrigger value="all">All <Badge variant="secondary" className="ml-2 rounded-full px-1">{counts?.all || 0}</Badge></TabsTrigger>
+                            <TabsTrigger value="running">Running <Badge variant="secondary" className="ml-2 rounded-full px-1">{counts?.running || 0}</Badge></TabsTrigger>
+                            <TabsTrigger value="pending">Pending <Badge variant="secondary" className="ml-2 rounded-full px-1">{counts?.pending || 0}</Badge></TabsTrigger>
+                            <TabsTrigger value="completed">Completed <Badge variant="secondary" className="ml-2 rounded-full px-1">{counts?.completed || 0}</Badge></TabsTrigger>
+                            <TabsTrigger value="rejected">Rejected <Badge variant="secondary" className="ml-2 rounded-full px-1">{counts?.rejected || 0}</Badge></TabsTrigger>
+                        </TabsList>
 
-                {hasFilters && (
-                    <Button
-                        variant="ghost"
-                        onClick={clearFilters}
-                        className="h-8 px-2 lg:px-3"
-                    >
-                        Reset
-                        <X className="ml-2 h-4 w-4" />
-                    </Button>
-                )}
-            </div>
+                        <div className="flex items-center gap-2">
+                            <Select
+                                value={type || "all"}
+                                onValueChange={(val) => onTypeChange?.(val === "all" ? null : val)}
+                            >
+                                <SelectTrigger className="w-[150px]">
+                                    <SelectValue placeholder="Filter by Type" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="all">All Types</SelectItem>
+                                    <SelectItem value="text">Text</SelectItem>
+                                    <SelectItem value="photo">Photo</SelectItem>
+                                    <SelectItem value="video">Video</SelectItem>
+                                </SelectContent>
+                            </Select>
+
+                            {hasFilters && (
+                                <Button
+                                    variant="ghost"
+                                    onClick={clearFilters}
+                                    className="h-8 px-2 lg:px-3"
+                                >
+                                    Reset
+                                    <X className="ml-2 h-4 w-4" />
+                                </Button>
+                            )}
+                        </div>
+                    </div>
+                </Tabs>
+            )}
 
             <div className="rounded-md border">
                 <Table>
@@ -131,14 +163,18 @@ export function AdsTable({
                             <TableHead className="text-right">Price</TableHead>
                             <TableHead className="text-right">Total Paid</TableHead>
                             <TableHead>
-                                <Button
-                                    variant="ghost"
-                                    onClick={toggleSort}
-                                    className="-ml-4 h-8 data-[state=open]:bg-accent"
-                                >
-                                    Purchase Date
-                                    <ArrowUpDown className="ml-2 h-4 w-4" />
-                                </Button>
+                                {onSortChange && sort ? (
+                                    <Button
+                                        variant="ghost"
+                                        onClick={toggleSort}
+                                        className="-ml-4 h-8 data-[state=open]:bg-accent"
+                                    >
+                                        Purchase Date
+                                        <ArrowUpDown className="ml-2 h-4 w-4" />
+                                    </Button>
+                                ) : (
+                                    "Purchase Date"
+                                )}
                             </TableHead>
                             <TableHead>Start Date</TableHead>
                             <TableHead>Status</TableHead>

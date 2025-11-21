@@ -116,6 +116,13 @@ export default function AdsPage() {
                     onStatusChange={setStatus}
                     onTypeChange={setType}
                     onSortChange={setSort}
+                    counts={{
+                        all: MOCK_ADS.length,
+                        running: MOCK_ADS.filter(ad => ad.approvalState === "running").length,
+                        pending: MOCK_ADS.filter(ad => ad.approvalState === "pending").length,
+                        completed: MOCK_ADS.filter(ad => ad.approvalState === "completed").length,
+                        rejected: MOCK_ADS.filter(ad => ad.approvalState === "rejected").length,
+                    }}
                 />
             </div>
         </div>
