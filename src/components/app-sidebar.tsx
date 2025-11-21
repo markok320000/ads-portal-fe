@@ -1,11 +1,14 @@
 "use client"
 
 import * as React from "react"
-import {IconChartBar, IconDashboard, IconListDetails, IconSettings, IconUser,} from "@tabler/icons-react"
-import {NavMain} from "@/components/nav-main"
-import {NavSecondary} from "@/components/nav-secondary"
-import {NavUser} from "@/components/nav-user"
-import {Sidebar, SidebarContent, SidebarFooter, SidebarHeader,} from "@/components/ui/sidebar"
+import { IconChartBar, IconCreditCard, IconDashboard, IconListDetails, IconSettings, IconUser, } from "@tabler/icons-react"
+import { NavMain } from "@/components/nav-main"
+import { NavSecondary } from "@/components/nav-secondary"
+import { NavUser } from "@/components/nav-user"
+import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, } from "@/components/ui/sidebar"
+import { title } from "process"
+import { ur } from "zod/v4/locales"
+import { icons } from "lucide-react"
 
 const data = {
     user: {
@@ -37,6 +40,11 @@ const data = {
             icon: IconSettings,
         },
         {
+            title: "Payment Methods",
+            url: "/payment-methods",
+            icon: IconCreditCard,
+        },
+        {
             title: "My Account",
             url: "#",
             icon: IconUser,
@@ -44,7 +52,7 @@ const data = {
     ]
 }
 
-export function AppSidebar({...props}: React.ComponentProps<typeof Sidebar>) {
+export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     return (
         <Sidebar className={'rounded-xl'} collapsible="offcanvas" {...props}>
             <SidebarHeader>
@@ -57,12 +65,12 @@ export function AppSidebar({...props}: React.ComponentProps<typeof Sidebar>) {
                 </div>
             </SidebarHeader>
             <SidebarContent>
-                <NavMain items={data.navMain}/>
-                <NavSecondary items={data.navSecondary} className="mt-auto"/>
+                <NavMain items={data.navMain} />
+                <NavSecondary items={data.navSecondary} className="mt-auto" />
             </SidebarContent>
 
             <SidebarFooter>
-                <NavUser user={data.user}/>
+                <NavUser user={data.user} />
             </SidebarFooter>
         </Sidebar>
     )
