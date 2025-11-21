@@ -1,5 +1,5 @@
-import { AdOption } from "@/models/AdOption";
-import { ImageIcon, Play, Type } from "lucide-react";
+import {AdOption} from "@/models/AdOption";
+import {ImageIcon, Play, Type} from "lucide-react";
 
 export const AD_OPTIONS: AdOption[] = [
     {
@@ -31,7 +31,7 @@ export const AD_OPTIONS: AdOption[] = [
         title: 'Video Commercial',
         description:
             'Premium video placement engineered for strong engagement and high conversion rates. Great for storytelling, demonstrations, and brand showcases.',
-        pricePerMille: 55.0,
+        pricePerMille: 30.0,
         icon: Play,
         recommended: true,
         features: [

@@ -1,20 +1,19 @@
 'use client';
 
 import React from 'react';
-import { loadStripe } from '@stripe/stripe-js';
-import { Elements, CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
-import { ChevronLeft, Lock } from 'lucide-react';
+import {loadStripe} from '@stripe/stripe-js';
+import {CardElement, Elements, useElements, useStripe} from '@stripe/react-stripe-js';
+import {Button} from '@/components/ui/button';
+import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from '@/components/ui/card';
+import {Label} from '@/components/ui/label';
+import {Input} from '@/components/ui/input';
+import {ChevronLeft, Lock} from 'lucide-react';
+import {calculateAdCost} from '@/utils/pricing-utils';
+import {AdType} from '@/models/adType';
 
 // Make sure to call `loadStripe` outside of a component’s render to avoid
 // recreating the `Stripe` object on every render.
 const stripePromise = loadStripe('pk_test_TYooMQauvdEDq54NiTphI7jx');
-
-import { calculateAdCost } from '@/utils/pricing-utils';
-import { AdType } from '@/models/adType';
 
 interface StripePaymentProps {
     details: {
@@ -30,11 +29,11 @@ interface StripePaymentProps {
     onBack: () => void;
 }
 
-const PaymentCard = ({ details, adType, adOption, onBack }: StripePaymentProps) => {
+const PaymentCard = ({details, adType, adOption, onBack}: StripePaymentProps) => {
     const stripe = useStripe();
     const elements = useElements();
 
-    const { totalCost } = calculateAdCost(adType, details.text.length, details.views);
+    const {totalCost} = calculateAdCost(adType, details.text.length, details.views);
 
     const handleSubmit = async () => {
         if (!stripe || !elements) {
@@ -44,7 +43,7 @@ const PaymentCard = ({ details, adType, adOption, onBack }: StripePaymentProps) 
         const cardElement = elements.getElement(CardElement);
 
         if (cardElement) {
-            const { error, paymentMethod } = await stripe.createPaymentMethod({
+            const {error, paymentMethod} = await stripe.createPaymentMethod({
                 type: 'card',
                 card: cardElement,
             });
@@ -92,7 +91,7 @@ const PaymentCard = ({ details, adType, adOption, onBack }: StripePaymentProps) 
                 <div className="space-y-4">
                     <div className="space-y-2">
                         <Label htmlFor="name">Cardholder Name</Label>
-                        <Input id="name" placeholder="John Doe" />
+                        <Input id="name" placeholder="John Doe"/>
                     </div>
                     <div className="space-y-2">
                         <Label>Card Details</Label>
@@ -114,16 +113,24 @@ const PaymentCard = ({ details, adType, adOption, onBack }: StripePaymentProps) 
                                 }}
                             />
                         </div>
+                        <div className="flex items-center gap-2 mt-2 text-xs text-slate-500">
+                            <Lock className="w-3 h-3"/>
+                            <span>Payments processed securely by</span>
+                            <img
+                                src="https://upload.wikimedia.org/wikipedia/commons/b/ba/Stripe_Logo%2C_revised_2016.svg"
+                                alt="Stripe" className="h-5 opacity-80 grayscale hover:grayscale-0 transition-all"/>
+                        </div>
                     </div>
                 </div>
             </CardContent>
-            <CardFooter className="px-6 py-4 border-t border-slate-200 flex items-center justify-between bg-slate-50/50">
+            <CardFooter
+                className="px-6 py-4 border-t border-slate-200 flex items-center justify-between bg-slate-50/50">
                 <Button
                     variant="ghost"
                     onClick={onBack}
                     className="text-slate-600 hover:text-slate-900 hover:bg-slate-200"
                 >
-                    <ChevronLeft className="w-4 h-4 mr-2" />
+                    <ChevronLeft className="w-4 h-4 mr-2"/>
                     Back
                 </Button>
                 <Button
@@ -131,7 +138,7 @@ const PaymentCard = ({ details, adType, adOption, onBack }: StripePaymentProps) 
                     disabled={!stripe}
                     className="bg-blue-600 hover:bg-blue-700 text-white"
                 >
-                    <Lock className="w-4 h-4 mr-2" />
+                    <Lock className="w-4 h-4 mr-2"/>
                     Pay ${totalCost.toFixed(2)}
                 </Button>
             </CardFooter>

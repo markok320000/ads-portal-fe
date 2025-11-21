@@ -1,4 +1,4 @@
-import { AdType } from "@/models/adType";
+import {AdType} from "@/models/adType";
 
 export const MAX_CHAR_COUNT = 500;
 
@@ -10,7 +10,7 @@ export const TIER_2_PRICE = 15;
 export const TIER_3_PRICE = 20;
 
 export const IMAGE_BASE_PRICE = 30;
-export const VIDEO_BASE_PRICE = 55;
+export const VIDEO_BASE_PRICE = 30;
 
 export function calculateTextCPM(textLength: number): number {
     if (textLength === 0) return 0;
