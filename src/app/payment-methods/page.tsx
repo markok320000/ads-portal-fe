@@ -1,3 +1,4 @@
+'use client'
 import { SiteHeader } from "@/components/site-header";
 import { SavedCard } from "@/components/saved-card";
 import { AddCardForm } from "@/components/add-card-form";
@@ -12,8 +13,15 @@ import {
     DialogTrigger,
 } from "@/components/ui/dialog";
 import { IconPlus, IconShieldCheck } from "@tabler/icons-react";
+import { useState } from "react";
+import { loadStripe } from "@stripe/stripe-js";
+import { Elements } from "@stripe/react-stripe-js";
 
-const mockCards: StripeCard[] = [
+// Make sure to call `loadStripe` outside of a component’s render to avoid
+// recreating the `Stripe` object on every render.
+const stripePromise = loadStripe('pk_test_TYooMQauvdEDq54NiTphI7jx');
+
+const initialMockCards: StripeCard[] = [
     {
         id: "card_1",
         brand: "visa",
@@ -25,7 +33,7 @@ const mockCards: StripeCard[] = [
     },
     {
         id: "card_2",
-        brand: "mastfercard",
+        brand: "mastercard",
         last4: "5555",
         exp_month: 10,
         exp_year: 2025,
@@ -35,13 +43,19 @@ const mockCards: StripeCard[] = [
 ];
 
 export default function Page() {
+    const [cards, setCards] = useState<StripeCard[]>(initialMockCards);
+
+    const handleRemoveCard = (cardId: string) => {
+        setCards((prevCards) => prevCards.filter((card) => card.id !== cardId));
+    };
+
     return (
         <div className="w-full">
+            <SiteHeader
+                title="Payment Methods"
+                description="Manage your saved payment methods"
+            />
             <div className="flex flex-col space-y-8 p-6 md:p-12 max-w-5xl mx-auto">
-                <SiteHeader
-                    title="Payment Methods"
-                    description="Manage your saved payment methods"
-                />
 
                 {/* Security Banner */}
                 <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 flex items-start space-x-3 max-w-3xl">
@@ -56,7 +70,7 @@ export default function Page() {
 
                 <div className="space-y-6">
                     <div className="flex items-center justify-between max-w-3xl">
-                        <h3 className="text-lg font-medium">Saved Cards ({mockCards.length})</h3>
+                        <h3 className="text-lg font-medium">Saved Cards ({cards.length})</h3>
                         <Dialog>
                             <DialogTrigger asChild>
                                 <Button variant="outline" size="sm">
@@ -71,14 +85,20 @@ export default function Page() {
                                         Add a new credit or debit card to your account.
                                     </DialogDescription>
                                 </DialogHeader>
-                                <AddCardForm />
+                                <Elements stripe={stripePromise}>
+                                    <AddCardForm />
+                                </Elements>
                             </DialogContent>
                         </Dialog>
                     </div>
 
                     <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-2 max-w-3xl">
-                        {mockCards.map((card) => (
-                            <SavedCard key={card.id} card={card} />
+                        {cards.map((card) => (
+                            <SavedCard
+                                key={card.id}
+                                card={card}
+                                onRemove={handleRemoveCard}
+                            />
                         ))}
                     </div>
                 </div>
