@@ -1,23 +1,23 @@
 'use client';
 
-import {useCallback, useEffect, useRef} from "react";
-import {AdType} from "@/models/adType";
-import {CampaignDetails, ValidationErrors} from "@/hooks/use-campaign-creator";
-import {AdOption} from "@/models/AdOption";
-import {CheckCircle2, ChevronLeft, Info, Upload, X} from "lucide-react";
+import { useCallback, useEffect, useRef } from "react";
+import { AdType } from "@/models/adType";
+import { CampaignDetails, ValidationErrors } from "@/hooks/use-campaign-creator";
+import { AdOption } from "@/models/AdOption";
+import { CheckCircle2, ChevronLeft, Info, Upload, X } from "lucide-react";
 import Image from "next/image";
-import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from "@/components/ui/card";
-import {Tooltip, TooltipContent, TooltipTrigger} from "@/components/ui/tooltip";
-import {Input} from "@/components/ui/input";
-import {Textarea} from "@/components/ui/textarea";
-import {Button} from "@/components/ui/button";
-import {ActionButton} from "@/components/ui/action-button";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
+import { ActionButton } from "@/components/ui/action-button";
 import CostEstimationCard from "./cost-estimation-card";
-import {MAX_CHAR_COUNT} from "@/utils/pricing-utils";
-import {useForm} from "react-hook-form";
-import {zodResolver} from "@hookform/resolvers/zod";
+import { MAX_CHAR_COUNT } from "@/utils/pricing-utils";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage,} from "@/components/ui/form";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, } from "@/components/ui/form";
 
 interface CampaignConfigurationProps {
     adType: AdType;
@@ -30,13 +30,13 @@ interface CampaignConfigurationProps {
 }
 
 export default function CampaignConfiguration({
-                                                  adType,
-                                                  details,
-                                                  setDetails,
-                                                  onNext,
-                                                  onBack,
-                                                  adOptions
-                                              }: CampaignConfigurationProps) {
+    adType,
+    details,
+    setDetails,
+    onNext,
+    onBack,
+    adOptions
+}: CampaignConfigurationProps) {
 
     const currentOption = adOptions.find(o => o.id === adType);
 
@@ -93,14 +93,7 @@ export default function CampaignConfiguration({
 
     // Re-trigger validation when adType changes
     // Skip the first render to avoid showing errors immediately on mount
-    const isFirstRender = useRef(true);
-    useEffect(() => {
-        if (isFirstRender.current) {
-            isFirstRender.current = false;
-            return;
-        }
-        form.trigger();
-    }, [adType, form]);
+
 
     const handleFileChange = useCallback((e: React.ChangeEvent<HTMLInputElement>, fieldChange: (file: File | null) => void) => {
         const file = e.target.files?.[0];
@@ -140,7 +133,7 @@ export default function CampaignConfiguration({
                 <CardHeader className="border-b border-slate-200 px-8 py-6">
                     <div className="flex items-center gap-4">
                         <div className="p-3 bg-white rounded-xl border border-slate-200 shadow-sm">
-                            <currentOption.icon className="w-6 h-6 text-indigo-600"/>
+                            <currentOption.icon className="w-6 h-6 text-indigo-600" />
                         </div>
                         <div>
                             <CardTitle
@@ -161,7 +154,7 @@ export default function CampaignConfiguration({
                                     <FormField
                                         control={form.control}
                                         name="name"
-                                        render={({field}) => (
+                                        render={({ field }) => (
                                             <FormItem>
                                                 <FormLabel className="text-sm font-semibold text-slate-700">Campaign
                                                     Name</FormLabel>
@@ -172,7 +165,7 @@ export default function CampaignConfiguration({
                                                         {...field}
                                                     />
                                                 </FormControl>
-                                                <FormMessage/>
+                                                <FormMessage />
                                             </FormItem>
                                         )}
                                     />
@@ -181,12 +174,12 @@ export default function CampaignConfiguration({
                                     <FormField
                                         control={form.control}
                                         name="text"
-                                        render={({field}) => (
+                                        render={({ field }) => (
                                             <FormItem>
                                                 <div className="flex justify-between items-center">
                                                     <FormLabel className="text-sm font-semibold text-slate-700">
                                                         Ad Text Content {adType !== 'text' &&
-                                                        <span className="text-slate-400 font-normal">(Optional)</span>}
+                                                            <span className="text-slate-400 font-normal">(Optional)</span>}
                                                     </FormLabel>
                                                     <span
                                                         className={`text-xs ${field.value?.length && field.value.length >= MAX_CHAR_COUNT ? 'text-red-500 font-bold' : 'text-slate-400'}`}>
@@ -202,7 +195,7 @@ export default function CampaignConfiguration({
                                                         {...field}
                                                     />
                                                 </FormControl>
-                                                <FormMessage/>
+                                                <FormMessage />
                                             </FormItem>
                                         )}
                                     />
@@ -212,7 +205,7 @@ export default function CampaignConfiguration({
                                         <FormField
                                             control={form.control}
                                             name="media"
-                                            render={({field}) => (
+                                            render={({ field }) => (
                                                 <FormItem>
                                                     <FormLabel className="text-sm font-semibold text-slate-700">
                                                         {adType === 'video' ? 'Video Asset' : 'Image Asset'}
@@ -233,7 +226,7 @@ export default function CampaignConfiguration({
                                                                 <div className="flex flex-col items-center gap-3">
                                                                     <div
                                                                         className="p-4 bg-white rounded-full shadow-sm">
-                                                                        <Upload className="w-6 h-6 text-indigo-600"/>
+                                                                        <Upload className="w-6 h-6 text-indigo-600" />
                                                                     </div>
                                                                     <div>
                                                                         <p className="font-medium text-slate-900">Click
@@ -249,7 +242,7 @@ export default function CampaignConfiguration({
                                                                 className="relative rounded-xl overflow-hidden border border-slate-200 bg-slate-900 aspect-video flex items-center justify-center group">
                                                                 {adType === 'video' ? (
                                                                     <video src={form.getValues('mediaUrl')!} controls
-                                                                           className="max-h-full max-w-full"/>
+                                                                        className="max-h-full max-w-full" />
                                                                 ) : (
                                                                     <Image
                                                                         src={form.getValues('mediaUrl')!}
@@ -263,12 +256,12 @@ export default function CampaignConfiguration({
                                                                     onClick={removeMedia}
                                                                     className="absolute top-2 right-2 p-2 bg-white/90 hover:bg-white text-red-600 rounded-full shadow-sm opacity-0 group-hover:opacity-100 transition-opacity"
                                                                 >
-                                                                    <X size={16}/>
+                                                                    <X size={16} />
                                                                 </button>
                                                             </div>
                                                         )}
                                                     </FormControl>
-                                                    <FormMessage/>
+                                                    <FormMessage />
                                                 </FormItem>
                                             )}
                                         />
@@ -293,7 +286,7 @@ export default function CampaignConfiguration({
                                 onClick={onBack}
                                 className="text-slate-600 hover:text-slate-900 hover:bg-slate-200"
                             >
-                                <ChevronLeft className="w-4 h-4 mr-2"/>
+                                <ChevronLeft className="w-4 h-4 mr-2" />
                                 Back
                             </Button>
                             <div className="flex items-center gap-4">
@@ -301,7 +294,7 @@ export default function CampaignConfiguration({
                                     <TooltipTrigger>
                                         <div
                                             className="flex items-center gap-2 text-slate-500 hover:text-slate-700 transition-colors cursor-help">
-                                            <Info className="w-4 h-4"/>
+                                            <Info className="w-4 h-4" />
                                             <span className="text-xs">Approval Process</span>
                                         </div>
                                     </TooltipTrigger>

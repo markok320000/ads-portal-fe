@@ -14,7 +14,8 @@ import {
 import { AdApprovalState, AdItem, AdType } from "@/models/ad-item";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { ArrowUpDown, X } from "lucide-react";
+import { ArrowUpDown, X, Eye } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 interface AdsTableProps {
     ads: AdItem[]
@@ -24,10 +25,11 @@ interface AdsTableProps {
     onStatusChange?: (value: string | null) => void
     onTypeChange?: (value: string | null) => void
     onSortChange?: (value: string) => void
+    onClearFilters?: () => void
     counts?: {
         all: number
-        running: number
-        pending: number
+        active: number
+        submitted: number
         completed: number
         rejected: number
     }
@@ -41,14 +43,16 @@ export function AdsTable({
     onStatusChange,
     onTypeChange,
     onSortChange,
+    onClearFilters,
     counts
 }: AdsTableProps) {
+    const router = useRouter()
 
     const getStatusVariant = (status: AdApprovalState) => {
         switch (status) {
-            case "running":
+            case "active":
                 return "default"
-            case "pending":
+            case "submitted":
                 return "secondary"
             default:
                 return "outline"
@@ -79,8 +83,12 @@ export function AdsTable({
     }
 
     const clearFilters = () => {
-        if (onStatusChange) onStatusChange(null)
-        if (onTypeChange) onTypeChange(null)
+        if (onClearFilters) {
+            onClearFilters()
+        } else {
+            if (onStatusChange) onStatusChange(null)
+            if (onTypeChange) onTypeChange(null)
+        }
     }
 
     const hasFilters = status !== null || type !== null
@@ -106,8 +114,8 @@ export function AdsTable({
                             </SelectTrigger>
                             <SelectContent>
                                 <SelectItem value="all">All Statuses ({counts?.all || 0})</SelectItem>
-                                <SelectItem value="running">Running ({counts?.running || 0})</SelectItem>
-                                <SelectItem value="pending">Pending ({counts?.pending || 0})</SelectItem>
+                                <SelectItem value="active">Active ({counts?.active || 0})</SelectItem>
+                                <SelectItem value="submitted">Submitted ({counts?.submitted || 0})</SelectItem>
                                 <SelectItem value="rejected">Rejected ({counts?.rejected || 0})</SelectItem>
                                 <SelectItem value="completed">Completed ({counts?.completed || 0})</SelectItem>
                             </SelectContent>
@@ -116,8 +124,8 @@ export function AdsTable({
                         {/* Desktop Status Filter (Tabs) */}
                         <TabsList className="hidden lg:flex h-9">
                             <TabsTrigger value="all">All <Badge variant="secondary" className="ml-2 rounded-full px-1">{counts?.all || 0}</Badge></TabsTrigger>
-                            <TabsTrigger value="running">Running <Badge variant="secondary" className="ml-2 rounded-full px-1">{counts?.running || 0}</Badge></TabsTrigger>
-                            <TabsTrigger value="pending">Pending <Badge variant="secondary" className="ml-2 rounded-full px-1">{counts?.pending || 0}</Badge></TabsTrigger>
+                            <TabsTrigger value="active">Active <Badge variant="secondary" className="ml-2 rounded-full px-1">{counts?.active || 0}</Badge></TabsTrigger>
+                            <TabsTrigger value="submitted">Submitted <Badge variant="secondary" className="ml-2 rounded-full px-1">{counts?.submitted || 0}</Badge></TabsTrigger>
                             <TabsTrigger value="completed">Completed <Badge variant="secondary" className="ml-2 rounded-full px-1">{counts?.completed || 0}</Badge></TabsTrigger>
                             <TabsTrigger value="rejected">Rejected <Badge variant="secondary" className="ml-2 rounded-full px-1">{counts?.rejected || 0}</Badge></TabsTrigger>
                         </TabsList>
@@ -183,7 +191,7 @@ export function AdsTable({
                     <TableBody>
                         {ads.length === 0 ? (
                             <TableRow>
-                                <TableCell colSpan={8} className="h-24 text-center">
+                                <TableCell colSpan={9} className="h-24 text-center">
                                     <div className="flex flex-col items-center justify-center gap-2 py-8">
                                         <svg className="w-12 h-12 text-gray-300" fill="none" stroke="currentColor"
                                             viewBox="0 0 24 24">
@@ -220,6 +228,16 @@ export function AdsTable({
                                             className="px-2.5 py-0.5 capitalize font-medium">
                                             {ad.approvalState}
                                         </Badge>
+                                    </TableCell>
+                                    <TableCell className="text-right">
+                                        <Button
+                                            variant="outline"
+                                            size="sm"
+                                            onClick={() => router.push(`/ads/${ad.id}`)}
+                                        >
+                                            View Details
+                                            <Eye className="ml-2 h-4 w-4" />
+                                        </Button>
                                     </TableCell>
                                 </TableRow>
                             ))

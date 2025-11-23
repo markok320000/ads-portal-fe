@@ -22,7 +22,7 @@ export function SavedCard({ card, className, onRemove }: SavedCardProps) {
         <>
             <div
                 className={cn(
-                    "relative w-full max-w-sm aspect-[1.586/1] rounded-xl p-6 text-white shadow-xl transition-transform hover:scale-[1.02] group",
+                    "min-w-[250px] relative w-full max-w-sm aspect-[1.586/1] rounded-xl p-6 text-white shadow-xl transition-transform hover:scale-[1.02] group",
                     "bg-gradient-to-br from-zinc-900 via-zinc-800 to-zinc-900",
                     "border border-white/10",
                     className

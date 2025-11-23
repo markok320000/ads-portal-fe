@@ -16,7 +16,7 @@ const MOCK_ADS: AdItem[] = [
         totalPricePaid: 150.00,
         purchaseDate: "2024-05-15T10:00:00Z",
         startDate: "2024-06-01T00:00:00Z",
-        approvalState: "running"
+        approvalState: "active"
     },
     {
         id: 2,
@@ -27,7 +27,7 @@ const MOCK_ADS: AdItem[] = [
         totalPricePaid: 500.00,
         purchaseDate: "2024-05-20T14:30:00Z",
         startDate: "2024-06-05T00:00:00Z",
-        approvalState: "pending"
+        approvalState: "submitted"
     },
     {
         id: 3,
@@ -60,7 +60,7 @@ const MOCK_ADS: AdItem[] = [
         totalPricePaid: 40.00,
         purchaseDate: "2024-05-18T16:45:00Z",
         startDate: "2024-06-02T00:00:00Z",
-        approvalState: "running"
+        approvalState: "active"
     },
     {
         id: 6,
@@ -71,18 +71,19 @@ const MOCK_ADS: AdItem[] = [
         totalPricePaid: 600.00,
         purchaseDate: "2024-05-25T13:20:00Z",
         startDate: "2024-06-08T00:00:00Z",
-        approvalState: "pending"
+        approvalState: "submitted"
     }
 ];
 
 export default function AdsPage() {
-    const { status, type, sort, setStatus, setType, setSort } = useAdsParams();
+    const { status, type, sort, setStatus, setType, setSort, clearParams } = useAdsParams();
 
     const filteredAds = useMemo(() => {
         let result = [...MOCK_ADS];
 
         if (status) {
-            result = result.filter(ad => ad.approvalState === status);
+            const filterStatus = status === 'active' ? 'active' : status;
+            result = result.filter(ad => ad.approvalState === filterStatus);
         }
 
         if (type) {
@@ -110,16 +111,17 @@ export default function AdsPage() {
             <div className="w-full px-4 lg:px-6 py-4 md:gap-6 md:py-6 ">
                 <AdsTable
                     ads={filteredAds}
-                    status={status}
+                    status={status === 'active' ? 'active' : status}
                     type={type}
                     sort={sort}
                     onStatusChange={setStatus}
                     onTypeChange={setType}
                     onSortChange={setSort}
+                    onClearFilters={clearParams}
                     counts={{
                         all: MOCK_ADS.length,
-                        running: MOCK_ADS.filter(ad => ad.approvalState === "running").length,
-                        pending: MOCK_ADS.filter(ad => ad.approvalState === "pending").length,
+                        active: MOCK_ADS.filter(ad => ad.approvalState === "active").length,
+                        submitted: MOCK_ADS.filter(ad => ad.approvalState === "submitted").length,
                         completed: MOCK_ADS.filter(ad => ad.approvalState === "completed").length,
                         rejected: MOCK_ADS.filter(ad => ad.approvalState === "rejected").length,
                     }}

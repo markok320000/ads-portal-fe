@@ -1,4 +1,4 @@
-export type AdApprovalState = "rejected" | "pending" | "running" | "completed"
+export type AdApprovalState = "rejected" | "submitted" | "active" | "completed"
 
 export interface AdItem {
     id: number

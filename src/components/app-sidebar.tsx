@@ -35,11 +35,6 @@ const data = {
     ],
     navSecondary: [
         {
-            title: "Settings",
-            url: "#",
-            icon: IconSettings,
-        },
-        {
             title: "Payment Methods",
             url: "/payment-methods",
             icon: IconCreditCard,

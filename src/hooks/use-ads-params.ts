@@ -45,5 +45,11 @@ export function useAdsParams() {
         setStatus: (val: string | null) => setParam("status", val),
         setType: (val: string | null) => setParam("type", val),
         setSort: (val: string) => setParam("sort", val),
+        clearParams: () => {
+            const params = new URLSearchParams(searchParams.toString())
+            params.delete("status")
+            params.delete("type")
+            router.push(pathname + "?" + params.toString())
+        }
     }
 }

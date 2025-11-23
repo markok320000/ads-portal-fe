@@ -1,6 +1,7 @@
-import {StatCard} from "@/components/stat-card";
-import {NotifyCard} from "@/components/NotifyCard";
-import {CompletionCard} from "@/components/CompletionCard";
+import { StatCard } from "@/components/stat-card";
+import { NotifyCard } from "@/components/NotifyCard";
+import { CompletionCard } from "@/components/CompletionCard";
+import Link from "next/link";
 
 const statsData = [
     {
@@ -17,19 +18,21 @@ const statsData = [
 const notifyCardsData = [
     {
         id: 2,
-        title: "Pending Ads",
+        title: "Submitted Ads",
         value: 3,
         label: "Review",
         description: "Ads waiting for approval",
         variant: "warning",
+        href: "/ads?status=submitted",
     },
     {
-        id: 2,
+        id: 3, // Fixed duplicate ID
         title: "Active Ads",
         value: 10,
         label: "View",
-        description: "Currently running ads",
+        description: "Currently active ads",
         variant: "success",
+        href: "/ads?status=active",
     },
 ];
 
@@ -61,14 +64,15 @@ export function SectionCards() {
             ))}
 
             {notifyCardsData.map((card) => (
-                <NotifyCard
-                    key={card.id}
-                    title={card.title}
-                    value={card.value}
-                    label={card.label}
-                    description={card.description}
-                    variant={card.variant}
-                />
+                <Link key={card.id} href={card.href} className="contents">
+                    <NotifyCard
+                        title={card.title}
+                        value={card.value}
+                        label={card.label}
+                        description={card.description}
+                        variant={card.variant as any}
+                    />
+                </Link>
             ))}
 
             {completionCardsData.map((card) => (
