@@ -1,0 +1,70 @@
+import {AdItem} from "@/models/ad-item";
+
+export const MOCK_ADS: AdItem[] = [
+    {
+        id: 1,
+        title: "Summer Sale Campaign",
+        adType: "photo",
+        viewsBought: 5000,
+        price: 150.00,
+        totalPricePaid: 150.00,
+        purchaseDate: "2024-05-15T10:00:00Z",
+        startDate: "2024-06-01T00:00:00Z",
+        approvalState: "active"
+    },
+    {
+        id: 2,
+        title: "New Product Launch",
+        adType: "video",
+        viewsBought: 10000,
+        price: 500.00,
+        totalPricePaid: 500.00,
+        purchaseDate: "2024-05-20T14:30:00Z",
+        startDate: "2024-06-05T00:00:00Z",
+        approvalState: "submitted"
+    },
+    {
+        id: 3,
+        title: "Brand Awareness",
+        adType: "text",
+        viewsBought: 2000,
+        price: 50.00,
+        totalPricePaid: 50.00,
+        purchaseDate: "2024-05-10T09:15:00Z",
+        startDate: "2024-05-25T00:00:00Z",
+        approvalState: "completed"
+    },
+    {
+        id: 4,
+        title: "Holiday Special",
+        adType: "photo",
+        viewsBought: 7500,
+        price: 225.00,
+        totalPricePaid: 225.00,
+        purchaseDate: "2024-05-22T11:00:00Z",
+        startDate: "2024-06-10T00:00:00Z",
+        approvalState: "rejected"
+    },
+    {
+        id: 5,
+        title: "Flash Sale",
+        adType: "text",
+        viewsBought: 1500,
+        price: 40.00,
+        totalPricePaid: 40.00,
+        purchaseDate: "2024-05-18T16:45:00Z",
+        startDate: "2024-06-02T00:00:00Z",
+        approvalState: "active"
+    },
+    {
+        id: 6,
+        title: "Tech Review",
+        adType: "video",
+        viewsBought: 12000,
+        price: 600.00,
+        totalPricePaid: 600.00,
+        purchaseDate: "2024-05-25T13:20:00Z",
+        startDate: "2024-06-08T00:00:00Z",
+        approvalState: "submitted"
+    }
+];

@@ -118,8 +118,8 @@ export function AdDetailsStats({
                                    totalViewsCardTitle = "Today's Views",
                                    comparisonText = "from yesterday"
                                }: AdDetailsStatsProps) {
-    // Hide statistics for pending and rejected ads
-    const showStats = !approvalState || (approvalState !== "pending" && approvalState !== "rejected");
+    // Hide statistics for submitted and rejected ads
+    const showStats = !approvalState || (approvalState !== "submitted" && approvalState !== "rejected");
 
     return (
         <Card className="py-0 border-none shadow-none rounded-none">
@@ -134,13 +134,13 @@ export function AdDetailsStats({
                 {showStats && (
                     <div className="flex flex-col sm:flex-row gap-4 w-full lg:w-auto">
                         <TotalViewsCard title={totalViewsCardTitle}
-                                        currentValue={15000}
-                                        previousValue={7000}
+                                        currentValue={1030}
+                                        previousValue={800}
                                         comparisonText={comparisonText}
                                         className={'flex-1 sm:min-w-[180px] lg:min-w-48 lg:max-w-48'}/>
                         <VerticalBarCard title={"Served Views"}
-                                         current={100}
-                                         max={400}
+                                         current={1800}
+                                         max={4000}
                                          className={"flex-1 sm:min-w-[180px] lg:min-w-48 lg:max-w-48"}/>
                     </div>
                 )}

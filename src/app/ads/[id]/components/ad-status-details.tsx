@@ -2,7 +2,7 @@ import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/compo
 import {Badge} from "@/components/ui/badge";
 import {AdStatusDetails as AdStatusDetailsType} from "@/models/ad-status-details";
 import {clsx} from "clsx";
-import {AlertCircle, Calendar, CreditCard, DollarSign, Eye, TrendingUp} from "lucide-react";
+import {AlertCircle, Calendar, CreditCard, DollarSign, Eye, Info, TrendingUp} from "lucide-react";
 import * as React from "react";
 
 interface AdStatusDetailsProps {
@@ -29,7 +29,7 @@ export function AdStatusDetails({data, className}: AdStatusDetailsProps) {
                     badgeVariant: "default" as const,
                     badgeClass: "bg-blue-500 hover:bg-blue-600 text-white",
                 };
-            case "pending":
+            case "submitted":
                 return {
                     bg: "bg-amber-50 dark:bg-amber-950/20 border-amber-200 dark:border-amber-900",
                     badgeVariant: "default" as const,
@@ -176,6 +176,25 @@ export function AdStatusDetails({data, className}: AdStatusDetailsProps) {
                                 </h3>
                                 <p className="text-sm text-red-800 dark:text-red-200 mt-1">
                                     {data.rejectionReason}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {/* Conditional Pending Section */}
+                {data.approvalState === "submitted" && (
+                    <div className="border-t pt-6 mt-6">
+                        <div
+                            className="flex items-start gap-3 p-4 rounded-lg bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900">
+                            <Info className="h-5 w-5 text-amber-600 dark:text-amber-400 mt-0.5 flex-shrink-0"/>
+                            <div>
+                                <h3 className="text-sm font-semibold text-amber-900 dark:text-amber-100">
+                                    Ad Under Review
+                                </h3>
+                                <p className="text-sm text-amber-800 dark:text-amber-200 mt-1">
+                                    Your ad is currently being reviewed. This process typically takes 1-2 days maximum.
+                                    You'll be notified via mail once your ad is approved and starts running.
                                 </p>
                             </div>
                         </div>

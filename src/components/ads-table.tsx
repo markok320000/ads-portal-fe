@@ -1,21 +1,14 @@
 "use client"
 
 import * as React from "react"
-import { Badge } from "@/components/ui/badge"
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from "@/components/ui/table"
-import { AdApprovalState, AdItem, AdType } from "@/models/ad-item";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Button } from "@/components/ui/button";
-import { ArrowUpDown, X, Eye } from "lucide-react";
-import { useRouter } from "next/navigation";
+import {Badge} from "@/components/ui/badge"
+import {Tabs, TabsList, TabsTrigger} from "@/components/ui/tabs"
+import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow,} from "@/components/ui/table"
+import {AdApprovalState, AdItem, AdType} from "@/models/ad-item";
+import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
+import {Button} from "@/components/ui/button";
+import {ArrowUpDown, Eye, X} from "lucide-react";
+import {useRouter} from "next/navigation";
 
 interface AdsTableProps {
     ads: AdItem[]
@@ -33,19 +26,21 @@ interface AdsTableProps {
         completed: number
         rejected: number
     }
+    viewDetailsPath?: string
 }
 
 export function AdsTable({
-    ads,
-    status,
-    type,
-    sort,
-    onStatusChange,
-    onTypeChange,
-    onSortChange,
-    onClearFilters,
-    counts
-}: AdsTableProps) {
+                             ads,
+                             status,
+                             type,
+                             sort,
+                             onStatusChange,
+                             onTypeChange,
+                             onSortChange,
+                             onClearFilters,
+                             counts,
+                             viewDetailsPath
+                         }: AdsTableProps) {
     const router = useRouter()
 
     const getStatusVariant = (status: AdApprovalState) => {
@@ -110,7 +105,7 @@ export function AdsTable({
                             onValueChange={(val) => onStatusChange?.(val === "all" ? null : val)}
                         >
                             <SelectTrigger className="w-[150px] lg:hidden">
-                                <SelectValue placeholder="Filter by Status" />
+                                <SelectValue placeholder="Filter by Status"/>
                             </SelectTrigger>
                             <SelectContent>
                                 <SelectItem value="all">All Statuses ({counts?.all || 0})</SelectItem>
@@ -123,11 +118,16 @@ export function AdsTable({
 
                         {/* Desktop Status Filter (Tabs) */}
                         <TabsList className="hidden lg:flex h-9">
-                            <TabsTrigger value="all">All <Badge variant="secondary" className="ml-2 rounded-full px-1">{counts?.all || 0}</Badge></TabsTrigger>
-                            <TabsTrigger value="active">Active <Badge variant="secondary" className="ml-2 rounded-full px-1">{counts?.active || 0}</Badge></TabsTrigger>
-                            <TabsTrigger value="submitted">Submitted <Badge variant="secondary" className="ml-2 rounded-full px-1">{counts?.submitted || 0}</Badge></TabsTrigger>
-                            <TabsTrigger value="completed">Completed <Badge variant="secondary" className="ml-2 rounded-full px-1">{counts?.completed || 0}</Badge></TabsTrigger>
-                            <TabsTrigger value="rejected">Rejected <Badge variant="secondary" className="ml-2 rounded-full px-1">{counts?.rejected || 0}</Badge></TabsTrigger>
+                            <TabsTrigger value="all">All <Badge variant="secondary"
+                                                                className="ml-2 rounded-full px-1">{counts?.all || 0}</Badge></TabsTrigger>
+                            <TabsTrigger value="active">Active <Badge variant="secondary"
+                                                                      className="ml-2 rounded-full px-1">{counts?.active || 0}</Badge></TabsTrigger>
+                            <TabsTrigger value="submitted">Submitted <Badge variant="secondary"
+                                                                            className="ml-2 rounded-full px-1">{counts?.submitted || 0}</Badge></TabsTrigger>
+                            <TabsTrigger value="completed">Completed <Badge variant="secondary"
+                                                                            className="ml-2 rounded-full px-1">{counts?.completed || 0}</Badge></TabsTrigger>
+                            <TabsTrigger value="rejected">Rejected <Badge variant="secondary"
+                                                                          className="ml-2 rounded-full px-1">{counts?.rejected || 0}</Badge></TabsTrigger>
                         </TabsList>
 
                         <div className="flex items-center gap-2">
@@ -136,7 +136,7 @@ export function AdsTable({
                                 onValueChange={(val) => onTypeChange?.(val === "all" ? null : val)}
                             >
                                 <SelectTrigger className="w-[150px]">
-                                    <SelectValue placeholder="Filter by Type" />
+                                    <SelectValue placeholder="Filter by Type"/>
                                 </SelectTrigger>
                                 <SelectContent>
                                     <SelectItem value="all">All Types</SelectItem>
@@ -153,7 +153,7 @@ export function AdsTable({
                                     className="h-8 px-2 lg:px-3"
                                 >
                                     Reset
-                                    <X className="ml-2 h-4 w-4" />
+                                    <X className="ml-2 h-4 w-4"/>
                                 </Button>
                             )}
                         </div>
@@ -178,7 +178,7 @@ export function AdsTable({
                                         className="-ml-4 h-8 data-[state=open]:bg-accent"
                                     >
                                         Purchase Date
-                                        <ArrowUpDown className="ml-2 h-4 w-4" />
+                                        <ArrowUpDown className="ml-2 h-4 w-4"/>
                                     </Button>
                                 ) : (
                                     "Purchase Date"
@@ -194,9 +194,9 @@ export function AdsTable({
                                 <TableCell colSpan={9} className="h-24 text-center">
                                     <div className="flex flex-col items-center justify-center gap-2 py-8">
                                         <svg className="w-12 h-12 text-gray-300" fill="none" stroke="currentColor"
-                                            viewBox="0 0 24 24">
+                                             viewBox="0 0 24 24">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
-                                                d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+                                                  d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"/>
                                         </svg>
                                         <p className="font-medium text-muted-foreground">No ads found</p>
                                     </div>
@@ -208,7 +208,7 @@ export function AdsTable({
                                     <TableCell className="font-medium">{ad.title}</TableCell>
                                     <TableCell>
                                         <Badge variant="outline"
-                                            className={`px-2.5 py-0.5 capitalize font-medium ${getTypeColor(ad.adType)}`}>
+                                               className={`px-2.5 py-0.5 capitalize font-medium ${getTypeColor(ad.adType)}`}>
                                             {ad.adType}
                                         </Badge>
                                     </TableCell>
@@ -221,11 +221,12 @@ export function AdsTable({
                                     <TableCell className="text-right font-semibold">
                                         ${ad.totalPricePaid.toFixed(2)}
                                     </TableCell>
-                                    <TableCell className="text-muted-foreground">{formatDate(ad.purchaseDate)}</TableCell>
+                                    <TableCell
+                                        className="text-muted-foreground">{formatDate(ad.purchaseDate)}</TableCell>
                                     <TableCell className="text-muted-foreground">{formatDate(ad.startDate)}</TableCell>
                                     <TableCell>
                                         <Badge variant={getStatusVariant(ad.approvalState)}
-                                            className="px-2.5 py-0.5 capitalize font-medium">
+                                               className="px-2.5 py-0.5 capitalize font-medium">
                                             {ad.approvalState}
                                         </Badge>
                                     </TableCell>
@@ -233,10 +234,10 @@ export function AdsTable({
                                         <Button
                                             variant="outline"
                                             size="sm"
-                                            onClick={() => router.push(`/ads/${ad.id}`)}
+                                            onClick={() => router.push(viewDetailsPath ? `${viewDetailsPath}` : `/ads/${ad.id}`)}
                                         >
                                             View Details
-                                            <Eye className="ml-2 h-4 w-4" />
+                                            <Eye className="ml-2 h-4 w-4"/>
                                         </Button>
                                     </TableCell>
                                 </TableRow>
