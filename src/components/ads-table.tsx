@@ -3,12 +3,14 @@
 import * as React from "react"
 import {Badge} from "@/components/ui/badge"
 import {Tabs, TabsList, TabsTrigger} from "@/components/ui/tabs"
-import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow,} from "@/components/ui/table"
-import {AdApprovalState, AdItem, AdType} from "@/models/ad-item";
-import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
-import {Button} from "@/components/ui/button";
-import {ArrowUpDown, Eye, X} from "lucide-react";
-import {useRouter} from "next/navigation";
+import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table"
+import {AdApprovalState, AdItem, AdType} from "@/models/ad-item"
+import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select"
+import {Button} from "@/components/ui/button"
+import {Input} from "@/components/ui/input"
+import {DatePicker} from "@/components/ui/date-picker"
+import {ArrowUpDown, Eye, Search, X} from "lucide-react"
+import {useRouter} from "next/navigation"
 
 interface AdsTableProps {
     ads: AdItem[]
@@ -27,6 +29,13 @@ interface AdsTableProps {
         rejected: number
     }
     viewDetailsPath?: string
+    isAdmin?: boolean
+    startDate?: Date
+    endDate?: Date
+    searchQuery?: string
+    onStartDateChange?: (date: Date | undefined) => void
+    onEndDateChange?: (date: Date | undefined) => void
+    onSearchQueryChange?: (value: string) => void
 }
 
 export function AdsTable({
@@ -39,7 +48,14 @@ export function AdsTable({
                              onSortChange,
                              onClearFilters,
                              counts,
-                             viewDetailsPath
+                             viewDetailsPath,
+                             isAdmin = false,
+                             startDate,
+                             endDate,
+                             searchQuery,
+                             onStartDateChange,
+                             onEndDateChange,
+                             onSearchQueryChange
                          }: AdsTableProps) {
     const router = useRouter()
 
@@ -83,10 +99,13 @@ export function AdsTable({
         } else {
             if (onStatusChange) onStatusChange(null)
             if (onTypeChange) onTypeChange(null)
+            if (onStartDateChange) onStartDateChange(undefined)
+            if (onEndDateChange) onEndDateChange(undefined)
+            if (onSearchQueryChange) onSearchQueryChange("")
         }
     }
 
-    const hasFilters = status !== null || type !== null
+    const hasFilters = status !== null || type !== null || !!startDate || !!endDate || !!searchQuery
     const showFilters = !!onStatusChange && !!onTypeChange
 
     return (
@@ -99,7 +118,6 @@ export function AdsTable({
                     className="w-full"
                 >
                     <div className="flex flex-wrap items-center justify-between gap-2">
-                        {/* Mobile Status Filter */}
                         <Select
                             value={status || "all"}
                             onValueChange={(val) => onStatusChange?.(val === "all" ? null : val)}
@@ -109,6 +127,8 @@ export function AdsTable({
                             </SelectTrigger>
                             <SelectContent>
                                 <SelectItem value="all">All Statuses ({counts?.all || 0})</SelectItem>
+                                The dtype of the fare_amount column is float64., number of missing values are 0., number
+                                of unique values are 148.
                                 <SelectItem value="active">Active ({counts?.active || 0})</SelectItem>
                                 <SelectItem value="submitted">Submitted ({counts?.submitted || 0})</SelectItem>
                                 <SelectItem value="rejected">Rejected ({counts?.rejected || 0})</SelectItem>
@@ -116,21 +136,30 @@ export function AdsTable({
                             </SelectContent>
                         </Select>
 
-                        {/* Desktop Status Filter (Tabs) */}
                         <TabsList className="hidden lg:flex h-9">
-                            <TabsTrigger value="all">All <Badge variant="secondary"
-                                                                className="ml-2 rounded-full px-1">{counts?.all || 0}</Badge></TabsTrigger>
-                            <TabsTrigger value="active">Active <Badge variant="secondary"
-                                                                      className="ml-2 rounded-full px-1">{counts?.active || 0}</Badge></TabsTrigger>
-                            <TabsTrigger value="submitted">Submitted <Badge variant="secondary"
-                                                                            className="ml-2 rounded-full px-1">{counts?.submitted || 0}</Badge></TabsTrigger>
-                            <TabsTrigger value="completed">Completed <Badge variant="secondary"
-                                                                            className="ml-2 rounded-full px-1">{counts?.completed || 0}</Badge></TabsTrigger>
-                            <TabsTrigger value="rejected">Rejected <Badge variant="secondary"
-                                                                          className="ml-2 rounded-full px-1">{counts?.rejected || 0}</Badge></TabsTrigger>
+                            <TabsTrigger value="all">
+                                All <Badge variant="secondary"
+                                           className="ml-2 rounded-full px-1">{counts?.all || 0}</Badge>
+                            </TabsTrigger>
+                            <TabsTrigger value="active">
+                                Active <Badge variant="secondary"
+                                              className="ml-2 rounded-full px-1">{counts?.active || 0}</Badge>
+                            </TabsTrigger>
+                            <TabsTrigger value="submitted">
+                                Submitted <Badge variant="secondary"
+                                                 className="ml-2 rounded-full px-1">{counts?.submitted || 0}</Badge>
+                            </TabsTrigger>
+                            <TabsTrigger value="completed">
+                                Completed <Badge variant="secondary"
+                                                 className="ml-2 rounded-full px-1">{counts?.completed || 0}</Badge>
+                            </TabsTrigger>
+                            <TabsTrigger value="rejected">
+                                Rejected <Badge variant="secondary"
+                                                className="ml-2 rounded-full px-1">{counts?.rejected || 0}</Badge>
+                            </TabsTrigger>
                         </TabsList>
 
-                        <div className="flex items-center gap-2">
+                        {!isAdmin && (
                             <Select
                                 value={type || "all"}
                                 onValueChange={(val) => onTypeChange?.(val === "all" ? null : val)}
@@ -145,13 +174,11 @@ export function AdsTable({
                                     <SelectItem value="video">Video</SelectItem>
                                 </SelectContent>
                             </Select>
+                        )}
 
+                        <div className="flex items-center gap-2">
                             {hasFilters && (
-                                <Button
-                                    variant="ghost"
-                                    onClick={clearFilters}
-                                    className="h-8 px-2 lg:px-3"
-                                >
+                                <Button variant="ghost" onClick={clearFilters} className="h-8 px-2 lg:px-3">
                                     Reset
                                     <X className="ml-2 h-4 w-4"/>
                                 </Button>
@@ -159,6 +186,51 @@ export function AdsTable({
                         </div>
                     </div>
                 </Tabs>
+            )}
+
+            {isAdmin && (
+                <div className="flex flex-col lg:flex-row lg:items-center gap-4 pb-2">
+                    <div className="relative flex-1 w-full lg:max-w-sm">
+                        <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground"/>
+                        <Input
+                            type="text"
+                            placeholder="Search by email or user ID..."
+                            value={searchQuery || ""}
+                            onChange={(e) => onSearchQueryChange?.(e.target.value)}
+                            className="h-9 pl-9 w-full"
+                        />
+                    </div>
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 w-full lg:w-auto">
+                        <DatePicker
+                            value={startDate}
+                            onChange={(date) => onStartDateChange?.(date)}
+                            placeholder="Start Date"
+                            className="w-full sm:w-[150px]"
+                        />
+                        <span className="hidden sm:inline text-sm text-muted-foreground">to</span>
+                        <DatePicker
+                            value={endDate}
+                            onChange={(date) => onEndDateChange?.(date)}
+                            placeholder="End Date"
+                            className="w-full sm:w-[150px]"
+                        />
+                    </div>
+
+                    <Select
+                        value={type || "all"}
+                        onValueChange={(val) => onTypeChange?.(val === "all" ? null : val)}
+                    >
+                        <SelectTrigger className="w-[150px]">
+                            <SelectValue placeholder="Filter by Type"/>
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="all">All Types</SelectItem>
+                            <SelectItem value="text">Text</SelectItem>
+                            <SelectItem value="photo">Photo</SelectItem>
+                            <SelectItem value="video">Video</SelectItem>
+                        </SelectContent>
+                    </Select>
+                </div>
             )}
 
             <div className="rounded-md border">
@@ -185,7 +257,10 @@ export function AdsTable({
                                 )}
                             </TableHead>
                             <TableHead>Start Date</TableHead>
+                            {isAdmin && <TableHead>Email</TableHead>}
+                            {isAdmin && <TableHead>User ID</TableHead>}
                             <TableHead>Status</TableHead>
+                            <TableHead></TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -212,18 +287,15 @@ export function AdsTable({
                                             {ad.adType}
                                         </Badge>
                                     </TableCell>
-                                    <TableCell className="text-right">
-                                        {ad.viewsBought.toLocaleString()}
-                                    </TableCell>
-                                    <TableCell className="text-right">
-                                        ${ad.price.toFixed(2)}
-                                    </TableCell>
-                                    <TableCell className="text-right font-semibold">
-                                        ${ad.totalPricePaid.toFixed(2)}
-                                    </TableCell>
+                                    <TableCell className="text-right">{ad.viewsBought.toLocaleString()}</TableCell>
+                                    <TableCell className="text-right">${ad.price.toFixed(2)}</TableCell>
+                                    <TableCell
+                                        className="text-right font-semibold">${ad.totalPricePaid.toFixed(2)}</TableCell>
                                     <TableCell
                                         className="text-muted-foreground">{formatDate(ad.purchaseDate)}</TableCell>
                                     <TableCell className="text-muted-foreground">{formatDate(ad.startDate)}</TableCell>
+                                    {isAdmin && <TableCell>{ad.username}</TableCell>}
+                                    {isAdmin && <TableCell className="text-muted-foreground">{ad.userId}</TableCell>}
                                     <TableCell>
                                         <Badge variant={getStatusVariant(ad.approvalState)}
                                                className="px-2.5 py-0.5 capitalize font-medium">

@@ -10,7 +10,9 @@ export const MOCK_ADS: AdItem[] = [
         totalPricePaid: 150.00,
         purchaseDate: "2024-05-15T10:00:00Z",
         startDate: "2024-06-01T00:00:00Z",
-        approvalState: "active"
+        approvalState: "active",
+        username: "john.doe@example.com",
+        userId: "user-001"
     },
     {
         id: 2,
@@ -21,7 +23,9 @@ export const MOCK_ADS: AdItem[] = [
         totalPricePaid: 500.00,
         purchaseDate: "2024-05-20T14:30:00Z",
         startDate: "2024-06-05T00:00:00Z",
-        approvalState: "submitted"
+        approvalState: "submitted",
+        username: "sarah.smith@example.com",
+        userId: "user-002"
     },
     {
         id: 3,
@@ -32,7 +36,9 @@ export const MOCK_ADS: AdItem[] = [
         totalPricePaid: 50.00,
         purchaseDate: "2024-05-10T09:15:00Z",
         startDate: "2024-05-25T00:00:00Z",
-        approvalState: "completed"
+        approvalState: "completed",
+        username: "mike.jones@example.com",
+        userId: "user-003"
     },
     {
         id: 4,
@@ -43,7 +49,9 @@ export const MOCK_ADS: AdItem[] = [
         totalPricePaid: 225.00,
         purchaseDate: "2024-05-22T11:00:00Z",
         startDate: "2024-06-10T00:00:00Z",
-        approvalState: "rejected"
+        approvalState: "rejected",
+        username: "emily.brown@example.com",
+        userId: "user-004"
     },
     {
         id: 5,
@@ -54,7 +62,9 @@ export const MOCK_ADS: AdItem[] = [
         totalPricePaid: 40.00,
         purchaseDate: "2024-05-18T16:45:00Z",
         startDate: "2024-06-02T00:00:00Z",
-        approvalState: "active"
+        approvalState: "active",
+        username: "john.doe@example.com",
+        userId: "user-001"
     },
     {
         id: 6,
@@ -65,6 +75,8 @@ export const MOCK_ADS: AdItem[] = [
         totalPricePaid: 600.00,
         purchaseDate: "2024-05-25T13:20:00Z",
         startDate: "2024-06-08T00:00:00Z",
-        approvalState: "submitted"
+        approvalState: "submitted",
+        username: "alex.wilson@example.com",
+        userId: "user-005"
     }
 ];

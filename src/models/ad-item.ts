@@ -10,6 +10,8 @@ export interface AdItem {
     purchaseDate: string
     startDate: string
     approvalState: AdApprovalState
+    username: string
+    userId: string
 }
 
 export type AdType = "text" | "photo" | "video"
