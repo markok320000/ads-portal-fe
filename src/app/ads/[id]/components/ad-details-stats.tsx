@@ -111,26 +111,62 @@ interface AdDetailsStatsProps {
     approvalState?: AdApprovalState;
     totalViewsCardTitle?: string;
     comparisonText?: string;
+    isAdmin?: boolean;
+    actions?: React.ReactNode;
 }
 
 export function AdDetailsStats({
                                    approvalState,
                                    totalViewsCardTitle = "Today's Views",
-                                   comparisonText = "from yesterday"
+                                   comparisonText = "from yesterday",
+                                   isAdmin = false,
+                                   actions
                                }: AdDetailsStatsProps) {
     // Hide statistics for submitted and rejected ads
     const showStats = !approvalState || (approvalState !== "submitted" && approvalState !== "rejected");
+
+    const getHeaderContent = () => {
+        if (approvalState === "submitted") {
+            return {
+                title: isAdmin ? "Ad Review" : "Ad Status",
+                description: isAdmin
+                    ? "Review the ad details below."
+                    : "Your ad is currently under review."
+            };
+        }
+        if (approvalState === "rejected") {
+            return {
+                title: isAdmin ? "Rejected Ad" : "Ad Status",
+                description: isAdmin
+                    ? "This ad has been rejected."
+                    : "Your ad has been rejected."
+            };
+        }
+        return {
+            title: isAdmin ? "Ad Performance" : "Your Ad Performance",
+            description: isAdmin
+                ? "Ad dashboard with all stats."
+                : "Your ad dashboard with all stats where you can track everything."
+        };
+    };
+
+    const {title, description} = getHeaderContent();
 
     return (
         <Card className="py-0 border-none shadow-none rounded-none">
             <CardHeader
                 className="flex flex-col gap-6 p-4 sm:p-6 lg:flex-row lg:items-start lg:justify-between border-b">
                 <div className="flex flex-col gap-1 lg:max-w-md">
-                    <CardTitle className="text-xl">Your Ad Performance</CardTitle>
+                    <CardTitle className="text-xl">{title}</CardTitle>
                     <CardDescription>
-                        Your ad dashboard with all stats where you can track everything.
+                        {description}
                     </CardDescription>
                 </div>
+                {actions && (
+                    <div className="flex items-center gap-2">
+                        {actions}
+                    </div>
+                )}
                 {showStats && (
                     <div className="flex flex-col sm:flex-row gap-4 w-full lg:w-auto">
                         <TotalViewsCard title={totalViewsCardTitle}

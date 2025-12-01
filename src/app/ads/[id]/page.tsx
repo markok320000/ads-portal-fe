@@ -1,11 +1,13 @@
 'use client'
-
 import {SiteHeader} from "@/components/site-header";
 import {AdDetailsStats} from "@/app/ads/[id]/components/ad-details-stats";
 import {AdStatusDetails} from "@/app/ads/[id]/components/ad-status-details";
 import {AdStatusDetails as AdStatusDetailsType} from "@/models/ad-status-details";
 import {useUser} from "@/hooks/use-user";
 import {UserRole} from "@/models/user-role";
+import {Button} from "@/components/ui/button";
+import {CheckCircle} from "lucide-react";
+import {RejectAdModal} from "@/app/ads/[id]/components/reject-ad-modal";
 
 // Mock data for demonstration - replace with actual API data
 const mockAdStatusData: AdStatusDetailsType = {
@@ -17,7 +19,7 @@ const mockAdStatusData: AdStatusDetailsType = {
     totalPricePaid: 2500,
     purchaseDate: "2024-06-01",
     startDate: "2024-06-15",
-    approvalState: "submitted",
+    approvalState: "rejected",
     rejectionReason: "Innapropriate content, your payment will be refunded.",
     paymentCardLast4: "4242",
     paymentCardBrand: "visa",
@@ -30,6 +32,7 @@ const mockAdStatusData: AdStatusDetailsType = {
 export default function Page() {
     const {user} = useUser();
     const isAdmin = user?.role === UserRole.ADMIN;
+    const isSubmitted = mockAdStatusData.approvalState === "submitted";
 
     const handleApprove = () => {
         console.log("Ad approved - ID:", mockAdStatusData.id);
@@ -42,20 +45,38 @@ export default function Page() {
         // TODO: Implement API call to reject ad
     };
 
+    const actions = isAdmin && isSubmitted ? (
+        <>
+            <Button
+                onClick={handleApprove}
+                className="bg-green-600 hover:bg-green-700 text-white"
+            >
+                <CheckCircle className="mr-2 h-4 w-4"/>
+                Approve
+            </Button>
+            <RejectAdModal onReject={handleReject}/>
+        </>
+    ) : null;
+
     return (
         <div>
-            <SiteHeader title={'Ad Campaign Details'} description={''}/>
+            <SiteHeader
+                title={'Ad Campaign Details'}
+                description={''}
+            />
             <div className="flex flex-1 flex-col">
                 <div className="@container/main flex flex-1 flex-col gap-2">
                     <div className="flex flex-col gap-4">
-                        <AdDetailsStats approvalState={mockAdStatusData.approvalState}/>
+                        <AdDetailsStats
+                            approvalState={mockAdStatusData.approvalState}
+                            isAdmin={isAdmin}
+                            actions={actions}
+                        />
 
                         <AdStatusDetails
                             className="m-4"
                             data={mockAdStatusData}
                             isAdmin={isAdmin}
-                            onApprove={handleApprove}
-                            onReject={handleReject}
                         />
                     </div>
                 </div>

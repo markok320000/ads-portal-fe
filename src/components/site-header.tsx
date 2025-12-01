@@ -10,7 +10,8 @@ interface SiteHeaderProps {
 export function SiteHeader({
                                title,
                                description,
-                           }: SiteHeaderProps) {
+                               actions,
+                           }: SiteHeaderProps & { actions?: React.ReactNode }) {
     return (
         <header
             className="flex shrink-0 items-center gap-2 border-b transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-(--header-height)">
@@ -22,10 +23,17 @@ export function SiteHeader({
                         className="mx-2 data-[orientation=vertical]:h-4"
                     />
                 </div>
-                <div className="flex flex-col">
-                    <h1 className="text-base font-medium">{title}</h1>
-                    {description && (
-                        <p className="text-sm text-muted-foreground">{description}</p>
+                <div className="flex flex-1 items-center justify-between">
+                    <div className="flex flex-col">
+                        <h1 className="text-base font-medium">{title}</h1>
+                        {description && (
+                            <p className="text-sm text-muted-foreground">{description}</p>
+                        )}
+                    </div>
+                    {actions && (
+                        <div className="flex items-center gap-2">
+                            {actions}
+                        </div>
                     )}
                 </div>
             </div>
