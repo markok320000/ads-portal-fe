@@ -113,8 +113,7 @@ export default function AccountSettingsPage() {
                     onUpdateMarketing={handleUpdateMarketing}
                 />
 
-                {/* Phone Settings - Only show for regular users, hide for admin */}
-                {user?.role === UserRole.USER && (
+                {user?.role === UserRole.ADMIN && (
                     <>
                         <Separator/>
                         <PhoneSettings

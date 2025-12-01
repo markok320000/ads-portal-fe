@@ -192,7 +192,7 @@ export function AdStatusDetails({data, className, isAdmin = false}: AdStatusDeta
                                 </h3>
                                 <p className="text-sm text-amber-800 dark:text-amber-200 mt-1">
                                     Your ad is currently being reviewed. This process typically takes 1-2 days maximum.
-                                    You'll be notified via mail once your ad is approved and starts running.
+                                    You&apos;ll be notified via mail once your ad is approved and starts running.
                                 </p>
                             </div>
                         </div>

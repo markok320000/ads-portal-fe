@@ -60,7 +60,7 @@ export default function UserDetailsPage() {
             <Card>
                 <CardHeader>
                     <CardTitle>Activity Summary</CardTitle>
-                    <CardDescription>User's advertising activity on the platform</CardDescription>
+                    <CardDescription>User&apos;s advertising activity on the platform</CardDescription>
                 </CardHeader>
                 <CardContent>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
