@@ -127,8 +127,6 @@ export function AdsTable({
                             </SelectTrigger>
                             <SelectContent>
                                 <SelectItem value="all">All Statuses ({counts?.all || 0})</SelectItem>
-                                The dtype of the fare_amount column is float64., number of missing values are 0., number
-                                of unique values are 148.
                                 <SelectItem value="active">Active ({counts?.active || 0})</SelectItem>
                                 <SelectItem value="submitted">Submitted ({counts?.submitted || 0})</SelectItem>
                                 <SelectItem value="rejected">Rejected ({counts?.rejected || 0})</SelectItem>

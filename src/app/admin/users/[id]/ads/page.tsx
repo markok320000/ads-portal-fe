@@ -19,7 +19,7 @@ export default function UserAdsPage() {
     // Filter ads by userId
     const userAds = useMemo(() => {
         if (!user) return [];
-        return MOCK_ADS
+        return MOCK_ADS.filter(ad => ad.userId === user.id);
     }, [user]);
 
     // Apply filters and sorting
@@ -76,6 +76,29 @@ export default function UserAdsPage() {
         <div className="space-y-6">
             <Card>
                 <CardHeader>
+                    <CardTitle>User Ads</CardTitle>
+                    <CardDescription>
+                        All advertisements created by {user.name}
+                    </CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <AdsTable
+                        ads={filteredAds}
+                        status={status}
+                        type={type}
+                        sort={sort}
+                        onStatusChange={setStatus}
+                        onTypeChange={setType}
+                        onSortChange={setSort}
+                        onClearFilters={handleClearFilters}
+                        counts={counts}
+                        isAdmin={false}
+                    />
+                </CardContent>
+            </Card>
+
+            <Card>
+                <CardHeader>
                     <CardTitle>Ad Statistics</CardTitle>
                     <CardDescription>Summary of user&#39;s advertising activity</CardDescription>
                 </CardHeader>
@@ -99,30 +122,32 @@ export default function UserAdsPage() {
                         </div>
                     </div>
                 </CardContent>
-            </Card>
-            <Card>
-                <CardHeader>
-                    <CardTitle>User Ads</CardTitle>
-                    <CardDescription>
-                        All advertisements created by {user.name}
-                    </CardDescription>
-                </CardHeader>
-                <CardContent>
-                    <AdsTable
-                        ads={filteredAds}
-                        status={status}
-                        type={type}
-                        sort={sort}
-                        onStatusChange={setStatus}
-                        onTypeChange={setType}
-                        onSortChange={setSort}
-                        onClearFilters={handleClearFilters}
-                        counts={counts}
-                        isAdmin={false}
-                    />
-                </CardContent>
-            </Card>
-
+            </Card><Card>
+            <CardHeader>
+                <CardTitle>Ad Statistics</CardTitle>
+                <CardDescription>Summary of user&#39;s advertising activity</CardDescription>
+            </CardHeader>
+            <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="flex flex-col items-center justify-center p-4 border rounded-lg">
+                        <p className="text-2xl font-bold">{user.totalPurchasedAds}</p>
+                        <p className="text-sm text-muted-foreground">Total Ads</p>
+                    </div>
+                    <div className="flex flex-col items-center justify-center p-4 border rounded-lg">
+                        <p className="text-2xl font-bold text-green-600">
+                            {userAds.filter(ad => ad.approvalState === 'active').length}
+                        </p>
+                        <p className="text-sm text-muted-foreground">Active Ads</p>
+                    </div>
+                    <div className="flex flex-col items-center justify-center p-4 border rounded-lg">
+                        <p className="text-2xl font-bold text-orange-600">
+                            {userAds.filter(ad => ad.approvalState === 'submitted').length}
+                        </p>
+                        <p className="text-sm text-muted-foreground">Pending Ads</p>
+                    </div>
+                </div>
+            </CardContent>
+        </Card>
         </div>
     );
 }

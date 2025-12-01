@@ -1,13 +1,13 @@
 "use client"
 
 import * as React from "react"
-import { IconChartBar, IconCreditCard, IconDashboard, IconListDetails, IconSettings, IconUser, IconUsers } from "@tabler/icons-react"
-import { NavMain } from "@/components/nav-main"
-import { NavSecondary } from "@/components/nav-secondary"
-import { NavUser } from "@/components/nav-user"
-import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, } from "@/components/ui/sidebar"
-import { useUser } from "@/hooks/use-user"
-import { UserRole } from "@/models/user-role"
+import {IconChartBar, IconCreditCard, IconDashboard, IconListDetails, IconUser, IconUsers} from "@tabler/icons-react"
+import {NavMain} from "@/components/nav-main"
+import {NavSecondary} from "@/components/nav-secondary"
+import {NavUser} from "@/components/nav-user"
+import {Sidebar, SidebarContent, SidebarFooter, SidebarHeader,} from "@/components/ui/sidebar"
+import {useUser} from "@/hooks/use-user"
+import {UserRole} from "@/models/user-role"
 
 const userData = {
     name: "allchat",
@@ -41,7 +41,7 @@ const regularUserNavSecondary = [
     },
     {
         title: "My Account",
-        url: "#",
+        url: "/account",
         icon: IconUser,
     }
 ]
@@ -67,13 +67,13 @@ const adminNavMain = [
 const adminNavSecondary = [
     {
         title: "My Account",
-        url: "#",
+        url: "/account",
         icon: IconUser,
     }
 ]
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-    const { user } = useUser()
+export function AppSidebar({...props}: React.ComponentProps<typeof Sidebar>) {
+    const {user} = useUser()
     const isAdmin = user.role === UserRole.ADMIN
 
     const navMain = isAdmin ? adminNavMain : regularUserNavMain
@@ -91,12 +91,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 </div>
             </SidebarHeader>
             <SidebarContent>
-                <NavMain items={navMain} />
-                <NavSecondary items={navSecondary} className="mt-auto" />
+                <NavMain items={navMain}/>
+                <NavSecondary items={navSecondary} className="mt-auto"/>
             </SidebarContent>
 
             <SidebarFooter>
-                <NavUser user={userData} />
+                <NavUser user={userData}/>
             </SidebarFooter>
         </Sidebar>
     )
