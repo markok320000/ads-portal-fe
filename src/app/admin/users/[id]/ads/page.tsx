@@ -1,18 +1,16 @@
 "use client";
-import {useParams, useRouter} from "next/navigation";
-import {useMemo} from "react";
+import {useParams} from "next/navigation";
+import {useMemo, useState} from "react";
 import {MOCK_USERS} from "@/data/mock-users";
 import {MOCK_ADS} from "@/data/mock-ads";
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
-import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
-import {Badge} from "@/components/ui/badge";
-import {Button} from "@/components/ui/button";
-import {Eye} from "lucide-react";
-import {AdApprovalState} from "@/models/ad-item";
+import {AdsTable} from "@/components/ads-table";
 
 export default function UserAdsPage() {
     const params = useParams();
-    const router = useRouter();
+    const [status, setStatus] = useState<string | null>(null);
+    const [type, setType] = useState<string | null>(null);
+    const [sort, setSort] = useState<string>("purchaseDate,desc");
 
     const user = useMemo(() => {
         return MOCK_USERS.find(u => u.id === params.id);
@@ -21,95 +19,61 @@ export default function UserAdsPage() {
     // Filter ads by userId
     const userAds = useMemo(() => {
         if (!user) return [];
-        return MOCK_ADS.filter(ad => ad.userId === user.id);
+        return MOCK_ADS
     }, [user]);
+
+    // Apply filters and sorting
+    const filteredAds = useMemo(() => {
+        let filtered = [...userAds];
+
+        // Filter by status
+        if (status) {
+            filtered = filtered.filter(ad => ad.approvalState === status);
+        }
+
+        // Filter by type
+        if (type) {
+            filtered = filtered.filter(ad => ad.adType === type);
+        }
+
+        // Sort
+        if (sort) {
+            const [field, order] = sort.split(",");
+            filtered.sort((a, b) => {
+                if (field === "purchaseDate") {
+                    const dateA = new Date(a.purchaseDate).getTime();
+                    const dateB = new Date(b.purchaseDate).getTime();
+                    return order === "asc" ? dateA - dateB : dateB - dateA;
+                }
+                return 0;
+            });
+        }
+
+        return filtered;
+    }, [userAds, status, type, sort]);
+
+    // Calculate counts
+    const counts = useMemo(() => {
+        return {
+            all: userAds.length,
+            active: userAds.filter(ad => ad.approvalState === "active").length,
+            submitted: userAds.filter(ad => ad.approvalState === "submitted").length,
+            completed: userAds.filter(ad => ad.approvalState === "completed").length,
+            rejected: userAds.filter(ad => ad.approvalState === "rejected").length,
+        };
+    }, [userAds]);
+
+    const handleClearFilters = () => {
+        setStatus(null);
+        setType(null);
+    };
 
     if (!user) {
         return <div>User not found</div>;
     }
 
-    const getStatusVariant = (status: AdApprovalState) => {
-        switch (status) {
-            case 'active':
-                return 'default';
-            case 'submitted':
-                return 'secondary';
-            case 'rejected':
-                return 'destructive';
-            case 'completed':
-                return 'outline';
-            default:
-                return 'outline';
-        }
-    };
-
     return (
         <div className="space-y-6">
-            <Card>
-                <CardHeader>
-                    <CardTitle>User Ads</CardTitle>
-                    <CardDescription>
-                        All advertisements created by {user.name}
-                    </CardDescription>
-                </CardHeader>
-                <CardContent>
-                    {userAds.length === 0 ? (
-                        <div className="text-center py-8 text-muted-foreground">
-                            No ads found for this user
-                        </div>
-                    ) : (
-                        <div className="rounded-md border">
-                            <Table>
-                                <TableHeader>
-                                    <TableRow>
-                                        <TableHead>Ad ID</TableHead>
-                                        <TableHead>Title</TableHead>
-                                        <TableHead>Type</TableHead>
-                                        <TableHead>Status</TableHead>
-                                        <TableHead>Created</TableHead>
-                                        <TableHead className="text-right">Actions</TableHead>
-                                    </TableRow>
-                                </TableHeader>
-                                <TableBody>
-                                    {userAds.map((ad) => (
-                                        <TableRow key={ad.id}>
-                                            <TableCell className="font-mono text-xs">
-                                                {ad.id}
-                                            </TableCell>
-                                            <TableCell className="font-medium">
-                                                {ad.title}
-                                            </TableCell>
-                                            <TableCell className="capitalize">
-                                                {ad.adType}
-                                            </TableCell>
-                                            <TableCell>
-                                                <Badge variant={getStatusVariant(ad.approvalState)}
-                                                       className="capitalize">
-                                                    {ad.approvalState}
-                                                </Badge>
-                                            </TableCell>
-                                            <TableCell className="text-muted-foreground">
-                                                {new Date(ad.purchaseDate).toLocaleDateString()}
-                                            </TableCell>
-                                            <TableCell className="text-right">
-                                                <Button
-                                                    variant="outline"
-                                                    size="sm"
-                                                    onClick={() => router.push(`/ads/${ad.id}`)}
-                                                >
-                                                    View
-                                                    <Eye className="ml-2 h-4 w-4"/>
-                                                </Button>
-                                            </TableCell>
-                                        </TableRow>
-                                    ))}
-                                </TableBody>
-                            </Table>
-                        </div>
-                    )}
-                </CardContent>
-            </Card>
-
             <Card>
                 <CardHeader>
                     <CardTitle>Ad Statistics</CardTitle>
@@ -136,6 +100,29 @@ export default function UserAdsPage() {
                     </div>
                 </CardContent>
             </Card>
+            <Card>
+                <CardHeader>
+                    <CardTitle>User Ads</CardTitle>
+                    <CardDescription>
+                        All advertisements created by {user.name}
+                    </CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <AdsTable
+                        ads={filteredAds}
+                        status={status}
+                        type={type}
+                        sort={sort}
+                        onStatusChange={setStatus}
+                        onTypeChange={setType}
+                        onSortChange={setSort}
+                        onClearFilters={handleClearFilters}
+                        counts={counts}
+                        isAdmin={false}
+                    />
+                </CardContent>
+            </Card>
+
         </div>
     );
 }
