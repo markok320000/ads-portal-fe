@@ -2,6 +2,7 @@
 
 import {type Icon} from "@tabler/icons-react"
 import {usePathname} from "next/navigation"
+import Link from "next/link"
 import {
     SidebarGroup,
     SidebarGroupContent,
@@ -34,10 +35,10 @@ export function NavMain({
                                     className={isActive ? "font-bold text-blue-600" : ""}
                                     asChild
                                 >
-                                    <a href={item.url} className="flex items-center gap-2">
+                                    <Link href={item.url} className="flex items-center gap-2">
                                         {item.icon && <item.icon/>}
                                         <span>{item.title}</span>
-                                    </a>
+                                    </Link>
                                 </SidebarMenuButton>
                             </SidebarMenuItem>
                         )

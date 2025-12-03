@@ -8,6 +8,10 @@ import {NavUser} from "@/components/nav-user"
 import {Sidebar, SidebarContent, SidebarFooter, SidebarHeader,} from "@/components/ui/sidebar"
 import {useUser} from "@/hooks/use-user"
 import {UserRole} from "@/models/user-role"
+import {useLogoutMutation} from "@/store/services/userApi"
+import {useAppDispatch} from "@/store/hooks"
+import {clearUser} from "@/store/slices/authSlice"
+import {useRouter} from "next/navigation"
 
 const userData = {
     name: "allchat",
@@ -76,6 +80,22 @@ export function AppSidebar({...props}: React.ComponentProps<typeof Sidebar>) {
     const {user} = useUser()
     const isAdmin = user.role === UserRole.ADMIN
 
+    const [logout] = useLogoutMutation()
+    const dispatch = useAppDispatch()
+    const router = useRouter()
+
+    const handleLogout = async () => {
+        try {
+            await logout().unwrap()
+        } catch (e) {
+            // ignore error but still clear state and redirect
+            console.error("Logout failed: ", e)
+        } finally {
+            dispatch(clearUser())
+            router.push("/login")
+        }
+    }
+
     const navMain = isAdmin ? adminNavMain : regularUserNavMain
     const navSecondary = isAdmin ? adminNavSecondary : regularUserNavSecondary
 
@@ -96,7 +116,7 @@ export function AppSidebar({...props}: React.ComponentProps<typeof Sidebar>) {
             </SidebarContent>
 
             <SidebarFooter>
-                <NavUser user={userData}/>
+                <NavUser user={userData} onLogout={handleLogout}/>
             </SidebarFooter>
         </Sidebar>
     )

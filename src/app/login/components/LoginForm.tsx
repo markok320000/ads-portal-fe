@@ -5,8 +5,12 @@ import {Button} from "@/components/ui/button";
 import {CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
 import {Input} from "@/components/ui/input";
 import {Label} from "@/components/ui/label";
-import {useState} from "react";
+import {Alert, AlertDescription} from "@/components/ui/alert";
+import {AlertTriangle} from "lucide-react";
 import {useRouter} from "next/navigation";
+import {useLoginMutation} from "@/store/services/userApi";
+import {useAppDispatch} from "@/store/hooks";
+import {setUser} from "@/store/slices/authSlice";
 
 enum AuthView {
     LOGIN = "LOGIN",
@@ -25,9 +29,9 @@ export function LoginForm({
                           }: React.ComponentPropsWithoutRef<"div"> & {
     onAuthViewChange?: (view: AuthView) => void;
 }) {
-    const [error, setError] = useState("");
-    const [isLoading, setIsLoading] = useState(false);
     const router = useRouter();
+    const dispatch = useAppDispatch();
+    const [login, {isLoading, error: apiError}] = useLoginMutation();
 
     const {
         register,
@@ -36,28 +40,31 @@ export function LoginForm({
     } = useForm<LoginRequest>();
 
     const onSubmit = async (data: LoginRequest) => {
-        setError("");
-        setIsLoading(true);
-
         try {
-            // TODO: Implement actual login logic here
-            console.log("Login data:", data);
+            const response = await login(data).unwrap();
 
-            // Simulated API call
-            await new Promise(resolve => setTimeout(resolve, 1000));
+            // Store user in Redux state
+            dispatch(setUser({
+                id: response.id,
+                firstName: response.firstName,
+                lastName: response.lastName,
+                email: response.email,
+                role: response.role,
+            }));
 
-            // On success, redirect to dashboard or ads page
+            // Login successful - session cookie is automatically set by the browser
+            console.log("Login successful:", response.message);
+
+            // Redirect to ads page
             router.push("/ads");
-        } catch (err) {
-            setError("Login failed. Please check your credentials and try again.");
-        } finally {
-            setIsLoading(false);
+        } catch (err: any) {
+            // Error is handled by RTK Query and displayed below
+            console.error("Login failed:", err);
         }
     };
 
     const handleForgotPassword = async (e: React.MouseEvent) => {
         e.preventDefault();
-        setError("");
         // TODO: Implement forgot password logic
         alert("Forgot password functionality - to be implemented");
     };
@@ -117,8 +124,15 @@ export function LoginForm({
                             )}
                         </div>
 
-                        {error && (
-                            <p className="text-center text-sm text-red-500">{error}</p>
+                        {apiError && (
+                            <Alert variant="destructive">
+                                <AlertTriangle className="h-4 w-4"/>
+                                <AlertDescription className="m-0 p-0">
+                                    {"data" in apiError && typeof apiError.data === "object" && apiError.data && "message" in apiError.data
+                                        ? String(apiError.data.message)
+                                        : "Login failed. Please check your credentials and try again."}
+                                </AlertDescription>
+                            </Alert>
                         )}
 
                         <Button type="submit" className="w-full" disabled={isLoading}>

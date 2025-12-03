@@ -1,33 +1,51 @@
-import {UserRole} from "@/models/user-role"
+import {UserRole} from "@/models/user-role";
+import {useAppSelector} from "@/store/hooks";
+import {selectCurrentUser, selectIsAdmin, selectIsAuthenticated} from "@/store/slices/authSlice";
+import {Role} from "@/store/services/userApi";
 
 export interface User {
-    id: string
-    name: string
-    email: string
-    role: UserRole
+    id: string;
+    name: string;
+    email: string;
+    role: UserRole;
+}
+
+// Map backend/store Role enum to UI UserRole enum
+function mapRole(role?: Role): UserRole {
+    if (role === Role.ADMIN) return UserRole.ADMIN;
+    return UserRole.USER;
 }
 
 /**
- * Placeholder hook for user authentication and authorization.
- * TODO: Implement actual user fetching logic
+ * Hook for user authentication and authorization, sourced from Redux state.
  */
 export function useUser() {
-    // Placeholder mock data - replace with actual implementation
-    // To test admin features, change UserRole.USER to UserRole.ADMIN
-    const user: User = {
-        id: "mock-user-id",
-        name: "Mock User",
-        email: "user@example.com",
-        role: UserRole.ADMIN, // Change to UserRole.ADMIN to test admin features
+    const currentUser = useAppSelector(selectCurrentUser);
+    const isAuthenticated = useAppSelector(selectIsAuthenticated);
+    const isAdmin = useAppSelector(selectIsAdmin);
 
-    }
+    // Build a UI-friendly user object. Provide a safe fallback when unauthenticated.
+    const user: User = currentUser
+        ? {
+            id: String(currentUser.id),
+            name: `${currentUser.firstName ?? ''} ${currentUser.lastName ?? ''}`.trim() || currentUser.email,
+            email: currentUser.email,
+            role: mapRole(currentUser.role),
+        }
+        : {
+            id: "",
+            name: "",
+            email: "",
+            role: UserRole.USER,
+        };
 
-    const isLoading = false
-    const isAuthenticated = true
+    // If needed, this could be wired to a "me" query status. For now, selection is synchronous.
+    const isLoading = false;
 
     return {
         user,
         isLoading,
         isAuthenticated,
-    }
+        isAdmin,
+    };
 }

@@ -7,15 +7,20 @@ import {Input} from "@/components/ui/input";
 import {Label} from "@/components/ui/label";
 import {Alert, AlertDescription} from "@/components/ui/alert";
 import {useState} from "react";
-import {AlertTriangle} from "lucide-react";
+import {AlertTriangle, CheckCircle2} from "lucide-react";
 import {useRouter} from "next/navigation";
+import {useRegisterMutation} from "@/store/services/userApi";
+import {useAppDispatch} from "@/store/hooks";
+import {setUser} from "@/store/slices/authSlice";
 
 enum AuthView {
     LOGIN = "LOGIN",
     REGISTER = "REGISTER",
 }
 
-interface RegisterRequest {
+interface RegisterFormData {
+    firstName: string;
+    lastName: string;
     email: string;
     password: string;
     confirmPassword: string;
@@ -28,10 +33,10 @@ export function RegisterForm({
                              }: React.ComponentPropsWithoutRef<"div"> & {
     onAuthViewChange?: (view: AuthView) => void;
 }) {
-    const [error, setError] = useState<string | null>(null);
     const [success, setSuccess] = useState<string | null>(null);
-    const [isLoading, setIsLoading] = useState(false);
     const router = useRouter();
+    const dispatch = useAppDispatch();
+    const [registerUser, {isLoading, error: apiError}] = useRegisterMutation();
 
     const {
         register: formRegister,
@@ -39,8 +44,10 @@ export function RegisterForm({
         watch,
         formState: {errors},
         reset,
-    } = useForm<RegisterRequest>({
+    } = useForm<RegisterFormData>({
         defaultValues: {
+            firstName: "",
+            lastName: "",
             email: "",
             password: "",
             confirmPassword: "",
@@ -49,29 +56,36 @@ export function RegisterForm({
 
     const password = watch("password");
 
-    const onSubmit = async (data: RegisterRequest) => {
-        setError(null);
+    const onSubmit = async (data: RegisterFormData) => {
         setSuccess(null);
-        setIsLoading(true);
 
         try {
-            // TODO: Implement actual registration logic here
-            console.log("Register data:", data);
+            // Remove confirmPassword before sending to API
+            const {confirmPassword, ...registerData} = data;
 
-            // Simulated API call
-            await new Promise(resolve => setTimeout(resolve, 1000));
+            const response = await registerUser(registerData).unwrap();
 
+            // Store user in Redux state
+            dispatch(setUser({
+                id: response.id,
+                firstName: response.firstName,
+                lastName: response.lastName,
+                email: response.email,
+                role: response.role,
+            }));
+
+            // Registration successful - session cookie is automatically set
+            console.log("Registration successful:", response.message);
             setSuccess("Registration successful! Redirecting...");
             reset();
 
-            // Redirect to login or dashboard after successful registration
+            // Redirect to ads page after successful registration
             setTimeout(() => {
                 router.push("/ads");
             }, 1500);
-        } catch (err) {
-            setError("Registration failed. Please try again.");
-        } finally {
-            setIsLoading(false);
+        } catch (err: any) {
+            // Error is handled by RTK Query and displayed below
+            console.error("Registration failed:", err);
         }
     };
 
@@ -84,6 +98,34 @@ export function RegisterForm({
             <CardContent>
                 <form onSubmit={handleSubmit(onSubmit)}>
                     <div className="flex flex-col gap-6">
+                        <div className="grid gap-2">
+                            <Label htmlFor="firstName">First Name</Label>
+                            <Input
+                                id="firstName"
+                                type="text"
+                                placeholder="John"
+                                {...formRegister("firstName", {
+                                    required: "First name is required",
+                                })}
+                                disabled={isLoading}
+                            />
+                            {errors.firstName && <p className="text-sm text-red-500">{errors.firstName.message}</p>}
+                        </div>
+
+                        <div className="grid gap-2">
+                            <Label htmlFor="lastName">Last Name</Label>
+                            <Input
+                                id="lastName"
+                                type="text"
+                                placeholder="Doe"
+                                {...formRegister("lastName", {
+                                    required: "Last name is required",
+                                })}
+                                disabled={isLoading}
+                            />
+                            {errors.lastName && <p className="text-sm text-red-500">{errors.lastName.message}</p>}
+                        </div>
+
                         <div className="grid gap-2">
                             <Label htmlFor="email">Email</Label>
                             <Input
@@ -138,16 +180,25 @@ export function RegisterForm({
                             )}
                         </div>
 
-                        {error && (
+                        {apiError && (
                             <Alert variant="destructive">
                                 <AlertTriangle className="h-4 w-4"/>
                                 <AlertDescription className="m-0 p-0">
-                                    {error}
+                                    {"data" in apiError && typeof apiError.data === "object" && apiError.data && "message" in apiError.data
+                                        ? String(apiError.data.message)
+                                        : "Registration failed. Please try again."}
                                 </AlertDescription>
                             </Alert>
                         )}
 
-                        {success && <p className="text-center text-sm text-green-600">{success}</p>}
+                        {success && (
+                            <Alert className="border-green-500 bg-green-50 text-green-900">
+                                <CheckCircle2 className="h-4 w-4 text-green-600"/>
+                                <AlertDescription className="m-0 p-0 text-green-900">
+                                    {success}
+                                </AlertDescription>
+                            </Alert>
+                        )}
 
                         <Button type="submit" className="w-full" disabled={isLoading}>
                             {isLoading ? "Registering..." : "Register"}

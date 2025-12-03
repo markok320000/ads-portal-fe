@@ -1,6 +1,7 @@
 import type {Metadata} from "next";
 import "./globals.css";
 import {ConditionalLayout} from "@/components/conditional-layout";
+import {StoreProvider} from "@/store/StoreProvider";
 import localFont from "next/font/local";
 
 const geistSans = localFont({
@@ -30,9 +31,11 @@ export default function RootLayout({
         <body
             className={`${geistSans.variable} ${geistMono.variable} bg-[#E0EEFF]`}
         >
-        <ConditionalLayout>
-            {children}
-        </ConditionalLayout>
+        <StoreProvider>
+            <ConditionalLayout>
+                {children}
+            </ConditionalLayout>
+        </StoreProvider>
         </body>
         </html>
     );
