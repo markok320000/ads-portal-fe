@@ -1,18 +1,18 @@
-import { StripeCard } from "@/models/stripe";
-import { IconBrandMastercard, IconBrandVisa, IconCreditCard, IconX } from "@tabler/icons-react";
-import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
-import { useState } from "react";
-import { ConfirmationDialog } from "@/components/ui/confirmation-dialog";
-import { useIsMobile } from "@/hooks/use-mobile";
+import {PaymentMethodDto} from "@/store/services/paymentApi";
+import {IconBrandMastercard, IconBrandVisa, IconCreditCard, IconX} from "@tabler/icons-react";
+import {cn} from "@/lib/utils";
+import {Button} from "@/components/ui/button";
+import {useState} from "react";
+import {ConfirmationDialog} from "@/components/ui/confirmation-dialog";
+import {useIsMobile} from "@/hooks/use-mobile";
 
 interface SavedCardProps {
-    card: StripeCard;
+    card: PaymentMethodDto;
     className?: string;
     onRemove?: (cardId: string) => void;
 }
 
-export function SavedCard({ card, className, onRemove }: SavedCardProps) {
+export function SavedCard({card, className, onRemove}: SavedCardProps) {
     const isMobile = useIsMobile();
     const isVisa = card.brand.toLowerCase() === "visa";
     const isMastercard = card.brand.toLowerCase() === "mastercard";
@@ -44,20 +44,17 @@ export function SavedCard({ card, className, onRemove }: SavedCardProps) {
                             setIsDeleteDialogOpen(true);
                         }}
                     >
-                        <IconX className="h-4 w-4" />
+                        <IconX className="h-4 w-4"/>
                     </Button>
                 )}
 
                 <div className="relative flex h-full flex-col justify-between">
                     <div className="flex items-start justify-between">
                         <div className="flex flex-col gap-1">
-                            <span className="font-mono text-xs tracking-wider text-white/70 uppercase">
-                                {card.funding}
-                            </span>
-                            <IconCreditCard className="h-6 w-6 text-white/50" />
+                            <IconCreditCard className="h-6 w-6 text-white/50"/>
                         </div>
-                        {isVisa && <IconBrandVisa className="h-12 w-12 text-white" />}
-                        {isMastercard && <IconBrandMastercard className="h-12 w-12 text-white" />}
+                        {isVisa && <IconBrandVisa className="h-12 w-12 text-white"/>}
+                        {isMastercard && <IconBrandMastercard className="h-12 w-12 text-white"/>}
                         {!isVisa && !isMastercard && (
                             <span className="text-lg font-bold uppercase tracking-wider">{card.brand}</span>
                         )}
@@ -66,22 +63,22 @@ export function SavedCard({ card, className, onRemove }: SavedCardProps) {
                     <div className="flex flex-col gap-4">
                         <div className="flex items-center gap-3">
                             <div className="flex gap-1">
-                                <div className="h-1.5 w-1.5 rounded-full bg-white/80" />
-                                <div className="h-1.5 w-1.5 rounded-full bg-white/80" />
-                                <div className="h-1.5 w-1.5 rounded-full bg-white/80" />
-                                <div className="h-1.5 w-1.5 rounded-full bg-white/80" />
+                                <div className="h-1.5 w-1.5 rounded-full bg-white/80"/>
+                                <div className="h-1.5 w-1.5 rounded-full bg-white/80"/>
+                                <div className="h-1.5 w-1.5 rounded-full bg-white/80"/>
+                                <div className="h-1.5 w-1.5 rounded-full bg-white/80"/>
                             </div>
                             <div className="flex gap-1">
-                                <div className="h-1.5 w-1.5 rounded-full bg-white/80" />
-                                <div className="h-1.5 w-1.5 rounded-full bg-white/80" />
-                                <div className="h-1.5 w-1.5 rounded-full bg-white/80" />
-                                <div className="h-1.5 w-1.5 rounded-full bg-white/80" />
+                                <div className="h-1.5 w-1.5 rounded-full bg-white/80"/>
+                                <div className="h-1.5 w-1.5 rounded-full bg-white/80"/>
+                                <div className="h-1.5 w-1.5 rounded-full bg-white/80"/>
+                                <div className="h-1.5 w-1.5 rounded-full bg-white/80"/>
                             </div>
                             <div className="flex gap-1">
-                                <div className="h-1.5 w-1.5 rounded-full bg-white/80" />
-                                <div className="h-1.5 w-1.5 rounded-full bg-white/80" />
-                                <div className="h-1.5 w-1.5 rounded-full bg-white/80" />
-                                <div className="h-1.5 w-1.5 rounded-full bg-white/80" />
+                                <div className="h-1.5 w-1.5 rounded-full bg-white/80"/>
+                                <div className="h-1.5 w-1.5 rounded-full bg-white/80"/>
+                                <div className="h-1.5 w-1.5 rounded-full bg-white/80"/>
+                                <div className="h-1.5 w-1.5 rounded-full bg-white/80"/>
                             </div>
                             <span className="font-mono text-xl tracking-widest text-white">
                                 {card.last4}
@@ -93,14 +90,14 @@ export function SavedCard({ card, className, onRemove }: SavedCardProps) {
                                 <span className="text-[10px] uppercase tracking-wider text-white/60">
                                     Card Holder
                                 </span>
-                                <span className="font-medium tracking-wide">Marko Ilic</span>
+                                <span className="font-medium tracking-wide">{card.cardholderName}</span>
                             </div>
                             <div className="flex flex-col items-end">
                                 <span className="text-[10px] uppercase tracking-wider text-white/60">
                                     Expires
                                 </span>
                                 <span className="font-mono font-medium tracking-wide">
-                                    {card.exp_month.toString().padStart(2, "0")}/{card.exp_year.toString().slice(-2)}
+                                    {card.expMonth.toString().padStart(2, "0")}/{card.expYear.toString().slice(-2)}
                                 </span>
                             </div>
                         </div>

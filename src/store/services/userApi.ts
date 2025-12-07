@@ -1,4 +1,5 @@
-import {createApi, fetchBaseQuery} from '@reduxjs/toolkit/query/react';
+import {createApi} from '@reduxjs/toolkit/query/react';
+import {baseQuery} from './baseQuery';
 
 // Role enum matching backend
 export enum Role {
@@ -102,20 +103,7 @@ export interface LogoutResponse {
 // Define a service using a base URL and expected endpoints
 export const userApi = createApi({
     reducerPath: 'userApi',
-    baseQuery: fetchBaseQuery({
-        baseUrl: '/api',
-        prepareHeaders: (headers, {getState}) => {
-            // Get the token from the store
-            const token = (getState() as { auth: { token: string | null } }).auth.token;
-
-            // If we have a token, set the Authorization header
-            if (token) {
-                headers.set('Authorization', `Bearer ${token}`);
-            }
-
-            return headers;
-        },
-    }),
+    baseQuery: baseQuery,
     tagTypes: ['User', 'Auth'],
     endpoints: (builder) => ({
         // Login
