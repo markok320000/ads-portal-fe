@@ -6,8 +6,10 @@ import {Elements} from '@stripe/react-stripe-js';
 import {Button} from '@/components/ui/button';
 import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from '@/components/ui/card';
 import {ChevronLeft, Lock} from 'lucide-react';
-import {calculateAdCost, createAdRequest} from '@/utils/pricing-utils';
+import {calculateAdCost} from '@/utils/pricing-utils';
 import {ActionButton} from '@/components/ui/action-button';
+import {useCreateAdMutation} from '@/store/services/adsApi';
+import {toast} from 'sonner';
 import {AdFormatDto, AdFormatType} from '@/data/adFormats';
 import {CampaignDetails} from '@/hooks/use-campaign-creator';
 import {PaymentMethodSelector} from './payment-method-selector';
@@ -25,6 +27,7 @@ interface StripePaymentProps {
 
 const PaymentCard = ({details, selectedFormat, adFormats, onBack}: StripePaymentProps) => {
     const [selectedPaymentMethodId, setSelectedPaymentMethodId] = React.useState<string | undefined>();
+    const [createAd, {isLoading}] = useCreateAdMutation();
 
     const {totalCost} = calculateAdCost(selectedFormat, details.text.length, details.views, adFormats);
 
@@ -33,26 +36,29 @@ const PaymentCard = ({details, selectedFormat, adFormats, onBack}: StripePayment
             return;
         }
 
-
         console.log('[PaymentMethod]', selectedPaymentMethodId);
 
         const imageUrl = selectedFormat.type === AdFormatType.PHOTO ? (details.mediaUrl || undefined) : undefined;
         const videoUrl = selectedFormat.type === AdFormatType.VIDEO ? (details.mediaUrl || undefined) : undefined;
 
-        createAdRequest({
-            adType: selectedFormat.type,
-            text: details.text,
-            imageUrl,
-            videoUrl,
-            stripeId: selectedPaymentMethodId,
-            viewsBought: details.views,
-            calculatedPrice: totalCost,
-            stripeAid: "TBD_STRIPE_ACCOUNT_ID"
-        });
+        try {
+            await createAd({
+                adType: selectedFormat.type,
+                text: details.text,
+                imageUrl,
+                videoUrl,
+                stripeId: selectedPaymentMethodId,
+                viewsBought: details.views,
+                calculatedPrice: totalCost,
+                stripeAid: "TBD_STRIPE_ACCOUNT_ID"
+            }).unwrap();
 
-        alert(`Payment successful with method ID: ${selectedPaymentMethodId}`);
-        // Here you would typically make a call to your backend to process the payment
-        // using the selectedPaymentMethodId
+            toast.success("Payment successful! Ad submitted for approval.");
+            // onBack(); // Or navigate to dashboard? User just said show toast.
+        } catch (error) {
+            console.error("Ad creation failed", error);
+            toast.error("Failed to create ad. Please try again.");
+        }
     };
 
     return (
@@ -112,12 +118,12 @@ const PaymentCard = ({details, selectedFormat, adFormats, onBack}: StripePayment
                     Back
                 </Button>
                 <ActionButton
-                    disabled={!selectedPaymentMethodId}
+                    disabled={!selectedPaymentMethodId || isLoading}
                     type="submit"
                     icon={Lock}
                     onClick={handleSubmit}
                 >
-                    Pay ${totalCost.toFixed(2)}
+                    {isLoading ? 'Processing...' : `Pay $${totalCost.toFixed(2)}`}
                 </ActionButton>
             </CardFooter>
         </Card>
