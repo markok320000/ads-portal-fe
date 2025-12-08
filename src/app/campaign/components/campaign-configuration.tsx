@@ -23,6 +23,7 @@ interface CampaignConfigurationProps {
     details: CampaignDetails;
     setDetails: (value: React.SetStateAction<CampaignDetails>) => void;
     errors: ValidationErrors;
+    adFormats: AdFormatDto[];
     onNext: () => void;
     onBack: () => void;
 }
@@ -31,6 +32,7 @@ export default function CampaignConfiguration({
                                                   selectedFormat,
                                                   details,
                                                   setDetails,
+                                                  adFormats,
                                                   onNext,
                                                   onBack
                                               }: CampaignConfigurationProps) {
@@ -279,6 +281,7 @@ export default function CampaignConfiguration({
                                         details={details}
                                         setDetails={setDetails}
                                         selectedFormat={selectedFormat}
+                                        adFormats={adFormats}
                                     />
                                 </div>
                             </div>

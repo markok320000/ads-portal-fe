@@ -1,7 +1,7 @@
 import {Card, CardContent} from "@/components/ui/card";
 import {Label} from "@/components/ui/label";
 import {Slider} from "@/components/ui/slider";
-import {AD_FORMAT_MOCK_DATA, AdFormatDto, AdFormatType} from "@/data/adFormats";
+import {AdFormatDto, AdFormatType} from "@/data/adFormats";
 import {CampaignDetails} from "@/hooks/use-campaign-creator";
 import {useMemo} from "react";
 import {calculateAdCost} from "@/utils/pricing-utils";
@@ -12,17 +12,19 @@ interface CostEstimationCardProps {
     details: CampaignDetails;
     setDetails: (value: React.SetStateAction<CampaignDetails>) => void;
     selectedFormat: AdFormatDto;
+    adFormats: AdFormatDto[];
 }
 
 export default function CostEstimationCard({
                                                details,
                                                setDetails,
-                                               selectedFormat
+                                               selectedFormat,
+                                               adFormats
                                            }: CostEstimationCardProps) {
 
     const pricingData = useMemo(() => {
-        return calculateAdCost(selectedFormat, details.text.length, details.views);
-    }, [details.views, details.text.length, selectedFormat]);
+        return calculateAdCost(selectedFormat, details.text.length, details.views, adFormats);
+    }, [details.views, details.text.length, selectedFormat, adFormats]);
 
     const {totalCost, baseCPM, textCPM, totalCPM} = pricingData;
 
@@ -32,9 +34,9 @@ export default function CostEstimationCard({
             return selectedFormat.pricingTiers;
         }
         // Fallback to TEXT format tiers if current format has none (e.g. Photo/Video with text component)
-        const textFormat = AD_FORMAT_MOCK_DATA.find(f => f.type === AdFormatType.TEXT);
+        const textFormat = adFormats.find(f => f.type === AdFormatType.TEXT);
         return textFormat?.pricingTiers || [];
-    }, [selectedFormat]);
+    }, [selectedFormat, adFormats]);
 
     const showTextPricing = textCPM > 0 || selectedFormat.type === AdFormatType.TEXT;
 

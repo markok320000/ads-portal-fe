@@ -1,8 +1,8 @@
-import {AD_FORMAT_MOCK_DATA, AdFormatDto, AdFormatType} from "@/data/adFormats";
+import {AdFormatDto, AdFormatType} from "@/data/adFormats";
 
 export const MAX_CHAR_COUNT = 500;
 
-export function calculateAdCost(format: AdFormatDto, textLength: number, views: number): {
+export function calculateAdCost(format: AdFormatDto, textLength: number, views: number, adFormats: AdFormatDto[]): {
     totalCost: number;
     baseCPM: number;
     textCPM: number;
@@ -18,9 +18,8 @@ export function calculateAdCost(format: AdFormatDto, textLength: number, views: 
     // If the current format is NOT text, we want to add the text price on top.
     // We assume there is a standard "TEXT" format in the system that defines these tiers.
     if (format.type !== AdFormatType.TEXT) {
-        // Find the TEXT format from the mock data to use its tiers
-        // In a real app, this might come from a different source or context
-        const textFormat = AD_FORMAT_MOCK_DATA.find(f => f.type === AdFormatType.TEXT);
+        // Find the TEXT format from the passed data to use its tiers
+        const textFormat = adFormats.find(f => f.type === AdFormatType.TEXT);
         if (textFormat && textFormat.pricingTiers) {
             textTiers = textFormat.pricingTiers;
         }

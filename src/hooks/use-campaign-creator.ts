@@ -1,6 +1,7 @@
-import {useState} from "react";
-import {AD_FORMAT_MOCK_DATA, AdFormatDto, AdFormatType} from "@/data/adFormats";
+import {useEffect, useState} from "react";
+import {AdFormatDto, AdFormatType} from "@/data/adFormats";
 import {useSearchParams} from "next/navigation";
+import {useGetAdFormatsQuery} from "@/store/services/adFormatsApi";
 
 export interface CampaignDetails {
     name: string;
@@ -24,14 +25,30 @@ export function useCampaignCreator() {
     const [currentStep, setCurrentStep] = useState(0);
 
     // 2. Data State
+    const {data: apiAdFormats, isLoading} = useGetAdFormatsQuery();
+    const adFormats = apiAdFormats || [];
+
     // Default to URL param -> PHOTO -> First Option
-    const [selectedAdFormat, setSelectedAdFormat] = useState<AdFormatDto>(() => {
-        if (initialFormatId) {
-            const found = AD_FORMAT_MOCK_DATA.find(f => f.id === Number(initialFormatId));
-            if (found) return found;
+    const [selectedAdFormat, setSelectedAdFormat] = useState<AdFormatDto | null>(null);
+
+    useEffect(() => {
+        if (isLoading || !adFormats || adFormats.length === 0) return;
+
+        // If we already have a selection that matches current data, do nothing?
+        // Or if we want to respect URL param on first load:
+        if (selectedAdFormat === null) {
+            let found: AdFormatDto | undefined;
+            if (initialFormatId) {
+                found = adFormats.find(f => f.id === Number(initialFormatId));
+            }
+            if (!found) {
+                found = adFormats.find(f => f.type === AdFormatType.PHOTO) || adFormats[0];
+            }
+            if (found) {
+                setSelectedAdFormat(found);
+            }
         }
-        return AD_FORMAT_MOCK_DATA.find(f => f.type === AdFormatType.PHOTO) || AD_FORMAT_MOCK_DATA[0];
-    });
+    }, [adFormats, initialFormatId, isLoading, selectedAdFormat]);
 
     const [details, setDetails] = useState<CampaignDetails>({
         name: '',
@@ -56,6 +73,8 @@ export function useCampaignCreator() {
             newErrors.name = 'Campaign name is required';
             isValid = false;
         }
+
+        if (!selectedAdFormat) return false;
 
         // Only require text if it is a text ad
         if (selectedAdFormat.type === AdFormatType.TEXT && !details.text.trim()) {
@@ -91,7 +110,7 @@ export function useCampaignCreator() {
     // Select Ad Type logic
     const selectAdFormat = (format: AdFormatDto) => {
         // Only perform updates if the type is actually different (by ID or Type)
-        if (format.id !== selectedAdFormat.id) {
+        if (!selectedAdFormat || format.id !== selectedAdFormat.id) {
             setSelectedAdFormat(format);
             // Reset details but keep default views
             setDetails(prev => ({
@@ -111,7 +130,8 @@ export function useCampaignCreator() {
         selectedAdFormat,
         details,
         errors,
-        adFormats: AD_FORMAT_MOCK_DATA,
+        adFormats,
+        isLoading,
 
         // Actions
         goToStep,

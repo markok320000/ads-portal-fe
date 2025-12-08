@@ -4,7 +4,8 @@ import Image from "next/image"
 import Link from "next/link"
 import {ArrowRight, BarChart3, FileText, Image as ImageIcon, MessageSquare, Users, Video} from "lucide-react"
 import {motion, Variants} from "framer-motion"
-import {AD_FORMAT_MOCK_DATA, AdFormatType} from "@/data/adFormats";
+import {AdFormatType} from "@/data/adFormats";
+import {useGetAdFormatsQuery} from "@/store/services/adFormatsApi";
 
 const containerVariants: Variants = {
     hidden: {opacity: 0},
@@ -31,6 +32,8 @@ const itemVariants: Variants = {
 }
 
 export default function Home() {
+    const {data: adFormats = []} = useGetAdFormatsQuery();
+
     return (
         // MAIN BACKGROUND COLOR set to your brand color
         <div className="min-h-screen w-full bg-[#E0EEFF] overflow-hidden relative selection:bg-blue-200">
@@ -126,7 +129,7 @@ export default function Home() {
                         </div>
 
                         <div className="grid w-full gap-6 sm:grid-cols-3">
-                            {AD_FORMAT_MOCK_DATA.map((format) => {
+                            {adFormats.map((format) => {
                                 let Icon = FileText;
                                 switch (format.type) {
                                     case AdFormatType.TEXT:

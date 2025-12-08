@@ -2,6 +2,7 @@ import {configureStore} from '@reduxjs/toolkit';
 import {setupListeners} from '@reduxjs/toolkit/query';
 import {userApi} from './services/userApi';
 import {paymentApi} from './services/paymentApi';
+import {adFormatsApi} from './services/adFormatsApi';
 import authReducer from './slices/authSlice';
 
 export const store = configureStore({
@@ -9,13 +10,17 @@ export const store = configureStore({
         // Add the generated reducer as a specific top-level slice
         [userApi.reducerPath]: userApi.reducer,
         [paymentApi.reducerPath]: paymentApi.reducer,
+        [adFormatsApi.reducerPath]: adFormatsApi.reducer,
         // Add the auth slice
         auth: authReducer,
     },
     // Adding the api middleware enables caching, invalidation, polling,
     // and other useful features of `rtk-query`.
     middleware: (getDefaultMiddleware) =>
-        getDefaultMiddleware().concat(userApi.middleware).concat(paymentApi.middleware),
+        getDefaultMiddleware()
+            .concat(userApi.middleware)
+            .concat(paymentApi.middleware)
+            .concat(adFormatsApi.middleware),
 });
 
 // optional, but required for refetchOnFocus/refetchOnReconnect behaviors
