@@ -53,6 +53,7 @@ export function calculateAdCost(format: AdFormatDto, textLength: number, views: 
 }
 
 export interface CreateAdRequest {
+    title: string;
     adType: AdFormatType;
     text: string;
     imageUrl?: string;

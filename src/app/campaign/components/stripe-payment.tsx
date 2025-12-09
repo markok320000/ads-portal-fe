@@ -43,6 +43,7 @@ const PaymentCard = ({details, selectedFormat, adFormats, onBack}: StripePayment
 
         try {
             await createAd({
+                title: details.name,
                 adType: selectedFormat.type,
                 text: details.text,
                 imageUrl,

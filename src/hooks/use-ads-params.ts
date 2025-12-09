@@ -1,12 +1,14 @@
 "use client"
 
-import { usePathname, useRouter, useSearchParams } from "next/navigation"
-import { useCallback } from "react"
+import {usePathname, useRouter, useSearchParams} from "next/navigation"
+import {useCallback} from "react"
 
 export interface AdsParams {
     status: string | null
     type: string | null
     sort: string
+    page: number
+    size: number
     startDate: Date | undefined
     endDate: Date | undefined
     searchQuery: string
@@ -46,7 +48,9 @@ export function useAdsParams() {
 
     const status = searchParams.get("status")
     const type = searchParams.get("type")
-    const sort = searchParams.get("sort") || "purchaseDate,desc"
+    const sort = searchParams.get("sort") || "submittedDate,desc" // Changed default to new field
+    const page = parseInt(searchParams.get("page") || "0", 10)
+    const size = parseInt(searchParams.get("size") || "10", 10)
 
     // Admin filters
     const startDateStr = searchParams.get("startDate")
@@ -60,6 +64,8 @@ export function useAdsParams() {
         status,
         type,
         sort,
+        page,
+        size,
         startDate,
         endDate,
         searchQuery,
@@ -67,6 +73,8 @@ export function useAdsParams() {
         setStatus: (val: string | null) => setParam("status", val),
         setType: (val: string | null) => setParam("type", val),
         setSort: (val: string) => setParam("sort", val),
+        setPage: (val: number) => setParam("page", val.toString()),
+        setSize: (val: number) => setParam("size", val.toString()),
 
         // FIXED — uses local date, no timezone problems
         setStartDate: (date: Date | undefined) =>
@@ -85,6 +93,8 @@ export function useAdsParams() {
             params.delete("startDate")
             params.delete("endDate")
             params.delete("search")
+            params.delete("page")
+            params.delete("size") // also clear size/page? Or reset to default? Usually reset to default is implicit by deletion.
             router.push(pathname + "?" + params.toString())
         }
     }

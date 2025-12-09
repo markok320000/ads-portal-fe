@@ -4,7 +4,7 @@ import * as React from "react"
 import {Badge} from "@/components/ui/badge"
 import {Tabs, TabsList, TabsTrigger} from "@/components/ui/tabs"
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table"
-import {AdApprovalState, AdItem, AdType} from "@/models/ad-item"
+import {Ad, AdFormatType, AdStatus} from "@/models/ad"
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select"
 import {Button} from "@/components/ui/button"
 import {Input} from "@/components/ui/input"
@@ -13,7 +13,7 @@ import {ArrowUpDown, Eye, Search, X} from "lucide-react"
 import {useRouter} from "next/navigation"
 
 interface AdsTableProps {
-    ads: AdItem[]
+    ads: Ad[]
     status?: string | null
     type?: string | null
     sort?: string
@@ -38,6 +38,11 @@ interface AdsTableProps {
     onSearchQueryChange?: (value: string) => void
 }
 
+function getAllCount(counts?: { active: number; submitted: number; completed: number; rejected: number }) {
+    if (!counts) return 0
+    return (counts.active || 0) + (counts.submitted || 0) + (counts.completed || 0) + (counts.rejected || 0)
+}
+
 export function AdsTable({
                              ads,
                              status,
@@ -59,24 +64,24 @@ export function AdsTable({
                          }: AdsTableProps) {
     const router = useRouter()
 
-    const getStatusVariant = (status: AdApprovalState) => {
+    const getStatusVariant = (status: AdStatus) => {
         switch (status) {
-            case "active":
+            case AdStatus.ACTIVE:
                 return "default"
-            case "submitted":
+            case AdStatus.SUBMITTED:
                 return "secondary"
             default:
                 return "outline"
         }
     }
 
-    const getTypeColor = (type: AdType) => {
+    const getTypeColor = (type: AdFormatType) => {
         switch (type) {
-            case "video":
+            case AdFormatType.VIDEO:
                 return "bg-purple-50 text-purple-700 border-purple-200"
-            case "photo":
+            case AdFormatType.PHOTO:
                 return "bg-blue-50 text-blue-700 border-blue-200"
-            case "text":
+            case AdFormatType.TEXT:
                 return "bg-gray-50 text-gray-700 border-gray-200"
             default:
                 return ""
@@ -86,10 +91,10 @@ export function AdsTable({
     const toggleSort = () => {
         if (!onSortChange || !sort) return
         const [field, order] = sort.split(",")
-        if (field === "purchaseDate") {
-            onSortChange(`purchaseDate,${order === "asc" ? "desc" : "asc"}`)
+        if (field === "submittedDate") {
+            onSortChange(`submittedDate,${order === "asc" ? "desc" : "asc"}`)
         } else {
-            onSortChange("purchaseDate,desc")
+            onSortChange("submittedDate,desc")
         }
     }
 
@@ -108,25 +113,27 @@ export function AdsTable({
     const hasFilters = status !== null || type !== null || !!startDate || !!endDate || !!searchQuery
     const showFilters = !!onStatusChange && !!onTypeChange
 
+    const allCount = getAllCount(counts)
+
     return (
         <div className="space-y-4">
             {showFilters && (
                 <Tabs
                     defaultValue="all"
-                    value={status || "all"}
-                    onValueChange={(val) => onStatusChange?.(val === "all" ? null : val)}
+                    value={status?.toLowerCase() || "all"}
+                    onValueChange={(val) => onStatusChange?.(val === "all" ? null : val.toUpperCase())}
                     className="w-full"
                 >
                     <div className="flex flex-wrap items-center justify-between gap-2">
                         <Select
-                            value={status || "all"}
-                            onValueChange={(val) => onStatusChange?.(val === "all" ? null : val)}
+                            value={status?.toLowerCase() || "all"}
+                            onValueChange={(val) => onStatusChange?.(val === "all" ? null : val.toUpperCase())}
                         >
                             <SelectTrigger className="w-[150px] lg:hidden">
                                 <SelectValue placeholder="Filter by Status"/>
                             </SelectTrigger>
                             <SelectContent>
-                                <SelectItem value="all">All Statuses ({counts?.all || 0})</SelectItem>
+                                <SelectItem value="all">All Statuses ({allCount})</SelectItem>
                                 <SelectItem value="active">Active ({counts?.active || 0})</SelectItem>
                                 <SelectItem value="submitted">Submitted ({counts?.submitted || 0})</SelectItem>
                                 <SelectItem value="rejected">Rejected ({counts?.rejected || 0})</SelectItem>
@@ -136,8 +143,7 @@ export function AdsTable({
 
                         <TabsList className="hidden lg:flex h-9">
                             <TabsTrigger value="all">
-                                All <Badge variant="secondary"
-                                           className="ml-2 rounded-full px-1">{counts?.all || 0}</Badge>
+                                All <Badge variant="secondary" className="ml-2 rounded-full px-1">{allCount}</Badge>
                             </TabsTrigger>
                             <TabsTrigger value="active">
                                 Active <Badge variant="secondary"
@@ -167,9 +173,9 @@ export function AdsTable({
                                 </SelectTrigger>
                                 <SelectContent>
                                     <SelectItem value="all">All Types</SelectItem>
-                                    <SelectItem value="text">Text</SelectItem>
-                                    <SelectItem value="photo">Photo</SelectItem>
-                                    <SelectItem value="video">Video</SelectItem>
+                                    <SelectItem value="TEXT">Text</SelectItem>
+                                    <SelectItem value="PHOTO">Photo</SelectItem>
+                                    <SelectItem value="VIDEO">Video</SelectItem>
                                 </SelectContent>
                             </Select>
                         )}
@@ -223,9 +229,9 @@ export function AdsTable({
                         </SelectTrigger>
                         <SelectContent>
                             <SelectItem value="all">All Types</SelectItem>
-                            <SelectItem value="text">Text</SelectItem>
-                            <SelectItem value="photo">Photo</SelectItem>
-                            <SelectItem value="video">Video</SelectItem>
+                            <SelectItem value="TEXT">Text</SelectItem>
+                            <SelectItem value="PHOTO">Photo</SelectItem>
+                            <SelectItem value="VIDEO">Video</SelectItem>
                         </SelectContent>
                     </Select>
                 </div>
@@ -239,7 +245,6 @@ export function AdsTable({
                             <TableHead>Type</TableHead>
                             <TableHead className="text-right">Views Bought</TableHead>
                             <TableHead className="text-right">Price</TableHead>
-                            <TableHead className="text-right">Total Paid</TableHead>
                             <TableHead>
                                 {onSortChange && sort ? (
                                     <Button
@@ -247,11 +252,11 @@ export function AdsTable({
                                         onClick={toggleSort}
                                         className="-ml-4 h-8 data-[state=open]:bg-accent"
                                     >
-                                        Purchase Date
+                                        Submitted Date
                                         <ArrowUpDown className="ml-2 h-4 w-4"/>
                                     </Button>
                                 ) : (
-                                    "Purchase Date"
+                                    "Submitted Date"
                                 )}
                             </TableHead>
                             <TableHead>Start Date</TableHead>
@@ -277,27 +282,25 @@ export function AdsTable({
                             </TableRow>
                         ) : (
                             ads.map((ad) => (
-                                <TableRow key={ad.id}>
+                                <TableRow key={ad.id || ad.title + ad.submittedDate}>
                                     <TableCell className="font-medium">{ad.title}</TableCell>
                                     <TableCell>
                                         <Badge variant="outline"
-                                               className={`px-2.5 py-0.5 capitalize font-medium ${getTypeColor(ad.adType)}`}>
-                                            {ad.adType}
+                                               className={`px-2.5 py-0.5 capitalize font-medium ${getTypeColor(ad.formatType)}`}>
+                                            {ad.formatType}
                                         </Badge>
                                     </TableCell>
                                     <TableCell className="text-right">{ad.viewsBought.toLocaleString()}</TableCell>
                                     <TableCell className="text-right">${ad.price.toFixed(2)}</TableCell>
                                     <TableCell
-                                        className="text-right font-semibold">${ad.totalPricePaid.toFixed(2)}</TableCell>
-                                    <TableCell
-                                        className="text-muted-foreground">{formatDate(ad.purchaseDate)}</TableCell>
+                                        className="text-muted-foreground">{formatDate(ad.submittedDate)}</TableCell>
                                     <TableCell className="text-muted-foreground">{formatDate(ad.startDate)}</TableCell>
-                                    {isAdmin && <TableCell>{ad.username}</TableCell>}
+                                    {isAdmin && <TableCell>{ad.email}</TableCell>}
                                     {isAdmin && <TableCell className="text-muted-foreground">{ad.userId}</TableCell>}
                                     <TableCell>
-                                        <Badge variant={getStatusVariant(ad.approvalState)}
+                                        <Badge variant={getStatusVariant(ad.status)}
                                                className="px-2.5 py-0.5 capitalize font-medium">
-                                            {ad.approvalState}
+                                            {ad.status}
                                         </Badge>
                                     </TableCell>
                                     <TableCell className="text-right">
