@@ -63,6 +63,8 @@ export interface AdSearchRequest {
     sort?: string;
     userId?: number;
     email?: string;
+    approvedAtStart?: string; // ISO date string for LocalDateTime
+    approvedAtEnd?: string; // ISO date string for LocalDateTime
 }
 
 export interface AdStatusCount {

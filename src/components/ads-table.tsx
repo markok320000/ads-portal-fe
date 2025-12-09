@@ -115,6 +115,11 @@ export function AdsTable({
 
     const allCount = getAllCount(counts)
 
+    const handleViewDetailsClick = (id: number) => {
+        const viewDetailsPath = isAdmin ? `/admin/ads/${id}` : `/ads/${id}`;
+        router.push(viewDetailsPath);
+    }
+
     return (
         <div className="space-y-4">
             {showFilters && (
@@ -307,7 +312,7 @@ export function AdsTable({
                                         <Button
                                             variant="outline"
                                             size="sm"
-                                            onClick={() => router.push(viewDetailsPath ? `${viewDetailsPath}` : `/admin/ads/${ad.id}`)}
+                                            onClick={() => handleViewDetailsClick(ad.id)}
                                         >
                                             View Details
                                             <Eye className="ml-2 h-4 w-4"/>

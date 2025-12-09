@@ -35,10 +35,10 @@ export const adsApi = createApi({
             }),
             providesTags: ['Ads'],
         }),
-        // Get Ad Status Counts
-        getAdStatusCounts: builder.query<AdStatusCount[], void>({
+        // Get Ad Status Counts By User (Regular users - their own ads only)
+        getAdStatusCountsByUser: builder.query<AdStatusCount[], void>({
             query: () => ({
-                url: '/ads/status-counts',
+                url: '/ads/status-counts-by-user',
                 method: 'GET',
             }),
             providesTags: ['Ads'],
@@ -50,6 +50,5 @@ export const adsApi = createApi({
 export const {
     useCreateAdMutation,
     useSearchAdsQuery,
-    useLazySearchAdsQuery,
-    useGetAdStatusCountsQuery,
+    useGetAdStatusCountsByUserQuery,
 } = adsApi;

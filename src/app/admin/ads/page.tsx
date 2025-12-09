@@ -3,11 +3,11 @@
 import {SiteHeader} from "@/components/site-header";
 import {AdsTable} from "@/components/ads-table";
 import {useAdsParams} from "@/hooks/use-ads-params";
-import {useMemo} from "react";
 import {useUser} from "@/hooks/use-user";
 import {UserRole} from "@/models/user-role";
 
-import {MOCK_ADS} from "@/data/mock-ads";
+import {useGetAdStatusCountsQuery, useSearchAdsQuery} from "@/store/services/adminAdsApi";
+import {AdFormatType, AdStatus} from "@/models/ad";
 
 export default function AdminAdsPage() {
     const {user} = useUser();
@@ -15,6 +15,8 @@ export default function AdminAdsPage() {
         status,
         type,
         sort,
+        page,
+        size,
         startDate,
         endDate,
         searchQuery,
@@ -27,56 +29,27 @@ export default function AdminAdsPage() {
         clearParams
     } = useAdsParams();
 
-    const filteredAds = useMemo(() => {
-        let result = [...MOCK_ADS];
+    const {data, isLoading} = useSearchAdsQuery({
+        status: status && status !== 'null' ? (status as AdStatus) : undefined,
+        types: type && type !== 'null' ? [type as AdFormatType] : undefined,
+        sort,
+        page,
+        size,
+        approvedAtStart: startDate ? startDate.toISOString() : undefined,
+        approvedAtEnd: endDate ? endDate.toISOString() : undefined,
+        email: searchQuery && searchQuery !== 'null' ? searchQuery : undefined,
+    });
 
-        // Status filter
-        if (status) {
-            const filterStatus = status === 'active' ? 'active' : status;
-            result = result.filter(ad => ad.approvalState === filterStatus);
-        }
+    const {data: statusCountsData} = useGetAdStatusCountsQuery();
 
-        // Type filter
-        if (type) {
-            result = result.filter(ad => ad.adType === type);
-        }
-
-        // Admin filters
-        if (startDate) {
-            result = result.filter(ad => {
-                const adStartDate = new Date(ad.startDate);
-                return adStartDate >= startDate;
-            });
-        }
-
-        if (endDate) {
-            result = result.filter(ad => {
-                const adStartDate = new Date(ad.startDate);
-                return adStartDate <= endDate;
-            });
-        }
-
-        if (searchQuery) {
-            const query = searchQuery.toLowerCase();
-            result = result.filter(ad =>
-                // Username is treated as email for filtering
-                ad.username.toLowerCase().includes(query) ||
-                ad.userId.toLowerCase().includes(query)
-            );
-        }
-
-        // Sort
-        const [sortField, sortOrder] = sort.split(",");
-        if (sortField === "purchaseDate") {
-            result.sort((a, b) => {
-                const dateA = new Date(a.purchaseDate).getTime();
-                const dateB = new Date(b.purchaseDate).getTime();
-                return sortOrder === "asc" ? dateA - dateB : dateB - dateA;
-            });
-        }
-
-        return result;
-    }, [status, type, sort, startDate, endDate, searchQuery]);
+    // Calculate counts from status counts API
+    const counts = {
+        all: data?.totalElements || 0,
+        active: statusCountsData?.find(sc => sc.status === AdStatus.ACTIVE)?.count || 0,
+        submitted: statusCountsData?.find(sc => sc.status === AdStatus.SUBMITTED)?.count || 0,
+        completed: statusCountsData?.find(sc => sc.status === AdStatus.COMPLETED)?.count || 0,
+        rejected: statusCountsData?.find(sc => sc.status === AdStatus.REJECTED)?.count || 0,
+    };
 
     return (
         <div className="w-full">
@@ -86,28 +59,22 @@ export default function AdminAdsPage() {
             />
             <div className="w-full px-4 lg:px-6 py-4 md:gap-6 md:py-6 ">
                 <AdsTable
-                    ads={filteredAds}
-                    status={status === 'active' ? 'active' : status}
+                    ads={data?.content || []}
+                    status={status}
                     type={type}
                     sort={sort}
-                    onStatusChange={setStatus}
-                    onTypeChange={setType}
-                    onSortChange={setSort}
-                    onClearFilters={clearParams}
-                    isAdmin={user.role === UserRole.ADMIN}
                     startDate={startDate}
                     endDate={endDate}
                     searchQuery={searchQuery}
+                    onStatusChange={setStatus}
+                    onTypeChange={setType}
+                    onSortChange={setSort}
                     onStartDateChange={setStartDate}
                     onEndDateChange={setEndDate}
                     onSearchQueryChange={setSearchQuery}
-                    counts={{
-                        all: MOCK_ADS.length,
-                        active: MOCK_ADS.filter(ad => ad.approvalState === "active").length,
-                        submitted: MOCK_ADS.filter(ad => ad.approvalState === "submitted").length,
-                        completed: MOCK_ADS.filter(ad => ad.approvalState === "completed").length,
-                        rejected: MOCK_ADS.filter(ad => ad.approvalState === "rejected").length,
-                    }}
+                    onClearFilters={clearParams}
+                    isAdmin={user.role === UserRole.ADMIN}
+                    counts={counts}
                 />
             </div>
         </div>
