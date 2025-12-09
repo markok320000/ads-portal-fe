@@ -9,8 +9,9 @@ import { Calendar, CheckCircle, DollarSign, Loader2, Mail, Shield, TrendingUp, U
 import { RejectAdModal } from "@/app/ads/[id]/components/reject-ad-modal";
 import { MOCK_USERS } from "@/data/mock-users";
 import { useRouter, useParams } from "next/navigation";
-import { useGetAdByIdQuery } from "@/store/services/adminAdsApi";
+import { useGetAdByIdQuery, useRejectAdMutation } from "@/store/services/adminAdsApi";
 import { AdStatus } from "@/models/ad";
+import { toast } from "sonner";
 
 export default function AdminAdDetailsPage() {
     const router = useRouter();
@@ -18,6 +19,7 @@ export default function AdminAdDetailsPage() {
     const adId = Number(params.id);
 
     const { data: adData, isLoading, error } = useGetAdByIdQuery(adId);
+    const [rejectAd, { isLoading: isRejecting }] = useRejectAdMutation();
 
     // Get user details from mock data
     const userData = adData ? MOCK_USERS.find(user => user.id === String(adData.userId)) : null;
@@ -28,10 +30,20 @@ export default function AdminAdDetailsPage() {
         // TODO: Implement API call to approve ad
     };
 
-    const handleReject = (reason: string) => {
-        console.log("Ad rejected - ID:", adData?.id);
-        console.log("Rejection reason:", reason || "No reason provided");
-        // TODO: Implement API call to reject ad
+    const handleReject = async (reason: string) => {
+        if (!adData) return;
+
+        try {
+            await rejectAd({
+                adId: adData.id,
+                rejectionReason: reason,
+            }).unwrap();
+
+            toast.success("Ad rejected successfully");
+        } catch (error) {
+            console.error("Failed to reject ad:", error);
+            toast.error("Failed to reject the ad. Please try again.");
+        }
     };
 
     const handleViewProfile = () => {
@@ -107,11 +119,11 @@ export default function AdminAdDetailsPage() {
 
     const actions = isSubmitted ? (
         <>
-            <ActionButton onClick={handleApprove}>
+            <ActionButton onClick={handleApprove} disabled={isRejecting}>
                 <CheckCircle className="mr-2 h-4 w-4" />
                 Approve
             </ActionButton>
-            <RejectAdModal onReject={handleReject} />
+            <RejectAdModal onReject={handleReject} isLoading={isRejecting} />
             <ActionButton
                 onClick={handleViewProfile}
                 variant="default"
