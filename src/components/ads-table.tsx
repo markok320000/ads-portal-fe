@@ -328,9 +328,10 @@ export function AdsTable({
     )
 }
 
-function formatDate(d: string) {
+function formatDate(d: string | null | undefined) {
+    if (!d) return "-"
     const date = new Date(d)
-    if (isNaN(date.getTime())) return d
+    if (isNaN(date.getTime())) return d || "-"
     return date.toLocaleDateString("en-US", {
         month: "short",
         day: "numeric",

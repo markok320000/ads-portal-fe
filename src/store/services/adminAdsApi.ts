@@ -1,7 +1,7 @@
-import { createApi } from '@reduxjs/toolkit/query/react';
-import { baseQuery } from './baseQuery';
-import { Ad, AdSearchRequest, AdStatusCount, PaginatedResponse } from '@/models/ad';
-import { AdStatusDetails } from '@/models/ad-status-details';
+import {createApi} from '@reduxjs/toolkit/query/react';
+import {baseQuery} from './baseQuery';
+import {Ad, AdSearchRequest, AdStatusCount, PaginatedResponse} from '@/models/ad';
+import {AdStatusDetails} from '@/models/ad-status-details';
 
 // Request DTO for ad rejection
 export interface AdRejectionRequest {
@@ -48,7 +48,7 @@ export const adminAdsApi = createApi({
                 url: `/admin/ads/${id}`,
                 method: 'GET',
             }),
-            providesTags: (result, error, id) => [{ type: 'AdminAds', id }],
+            providesTags: (result, error, id) => [{type: 'AdminAds', id}],
         }),
         // Reject Ad (Admin)
         rejectAd: builder.mutation<AdStatusDetails, AdRejectionRequest>({
@@ -59,7 +59,19 @@ export const adminAdsApi = createApi({
             }),
             // Invalidate cache to refetch the ad details after rejection
             invalidatesTags: (result, error, request) => [
-                { type: 'AdminAds', id: request.adId },
+                {type: 'AdminAds', id: request.adId},
+                'AdminAds',
+            ],
+        }),
+        // Approve Ad (Admin)
+        approveAd: builder.mutation<AdStatusDetails, number>({
+            query: (id) => ({
+                url: `/admin/ads/approve/${id}`,
+                method: 'POST',
+            }),
+            // Invalidate cache to refetch the ad details after approval
+            invalidatesTags: (result, error, id) => [
+                {type: 'AdminAds', id},
                 'AdminAds',
             ],
         }),
@@ -73,4 +85,5 @@ export const {
     useGetAdStatusCountsQuery,
     useGetAdByIdQuery,
     useRejectAdMutation,
+    useApproveAdMutation,
 } = adminAdsApi;
