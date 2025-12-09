@@ -6,6 +6,7 @@ import {adFormatsApi} from './services/adFormatsApi';
 import {fileApi} from './services/fileApi';
 import {adsApi} from './services/adsApi';
 import {adminAdsApi} from './services/adminAdsApi';
+import {adminUsersApi} from './services/adminUsersApi';
 import authReducer from './slices/authSlice';
 
 export const store = configureStore({
@@ -17,6 +18,7 @@ export const store = configureStore({
         [fileApi.reducerPath]: fileApi.reducer,
         [adsApi.reducerPath]: adsApi.reducer,
         [adminAdsApi.reducerPath]: adminAdsApi.reducer,
+        [adminUsersApi.reducerPath]: adminUsersApi.reducer,
         // Add the auth slice
         auth: authReducer,
     },
@@ -29,7 +31,8 @@ export const store = configureStore({
             .concat(adFormatsApi.middleware)
             .concat(fileApi.middleware)
             .concat(adsApi.middleware)
-            .concat(adminAdsApi.middleware),
+            .concat(adminAdsApi.middleware)
+            .concat(adminUsersApi.middleware),
 });
 
 // optional, but required for refetchOnFocus/refetchOnReconnect behaviors

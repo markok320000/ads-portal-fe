@@ -13,6 +13,7 @@ import {toast} from 'sonner';
 import {AdFormatDto, AdFormatType} from '@/data/adFormats';
 import {CampaignDetails} from '@/hooks/use-campaign-creator';
 import {PaymentMethodSelector} from './payment-method-selector';
+import {useRouter} from 'next/navigation';
 
 // Make sure to call `loadStripe` outside of a component’s render to avoid
 // recreating the `Stripe` object on every render.
@@ -28,6 +29,7 @@ interface StripePaymentProps {
 const PaymentCard = ({details, selectedFormat, adFormats, onBack}: StripePaymentProps) => {
     const [selectedPaymentMethodId, setSelectedPaymentMethodId] = React.useState<string | undefined>();
     const [createAd, {isLoading}] = useCreateAdMutation();
+    const router = useRouter();
 
     const {totalCost} = calculateAdCost(selectedFormat, details.text.length, details.views, adFormats);
 
@@ -55,7 +57,7 @@ const PaymentCard = ({details, selectedFormat, adFormats, onBack}: StripePayment
             }).unwrap();
 
             toast.success("Payment successful! Ad submitted for approval.");
-            // onBack(); // Or navigate to dashboard? User just said show toast.
+            router.push('/ads');
         } catch (error) {
             console.error("Ad creation failed", error);
             toast.error("Failed to create ad. Please try again.");
