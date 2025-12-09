@@ -2,6 +2,7 @@ import {createApi} from '@reduxjs/toolkit/query/react';
 import {baseQuery} from './baseQuery';
 import {CreateAdRequest} from '@/utils/pricing-utils';
 import {Ad, AdSearchRequest, AdStatusCount, PaginatedResponse} from '@/models/ad';
+import {AdStatusDetails} from '@/models/ad-status-details';
 
 // Define the service using a base URL and expected endpoints
 export const adsApi = createApi({
@@ -43,6 +44,14 @@ export const adsApi = createApi({
             }),
             providesTags: ['Ads'],
         }),
+        // Get Ad By ID
+        getAdById: builder.query<AdStatusDetails, number>({
+            query: (id) => ({
+                url: `/ads/${id}`,
+                method: 'GET',
+            }),
+            providesTags: (result, error, id) => [{type: 'Ads', id}],
+        }),
     }),
 });
 
@@ -51,4 +60,5 @@ export const {
     useCreateAdMutation,
     useSearchAdsQuery,
     useGetAdStatusCountsByUserQuery,
+    useGetAdByIdQuery,
 } = adsApi;

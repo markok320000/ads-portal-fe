@@ -4,7 +4,7 @@ import {ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent} from "@/
 import {CartesianGrid, Line, LineChart, XAxis} from "recharts";
 import {VerticalBarCard} from "@/app/ads/[id]/components/vertical-bar-card";
 import {TotalViewsCard} from "@/app/ads/[id]/components/total-views-card";
-import {AdApprovalState} from "@/models/ad-item";
+import {AdStatus} from "@/models/ad";
 
 const chartData = [
     {date: "2024-04-01", views: 222},
@@ -108,7 +108,7 @@ const chartConfig = {
 } satisfies ChartConfig
 
 interface AdDetailsStatsProps {
-    approvalState?: AdApprovalState;
+    status?: AdStatus;
     totalViewsCardTitle?: string;
     comparisonText?: string;
     isAdmin?: boolean;
@@ -116,17 +116,17 @@ interface AdDetailsStatsProps {
 }
 
 export function AdDetailsStats({
-                                   approvalState,
+                                   status,
                                    totalViewsCardTitle = "Today's Views",
                                    comparisonText = "from yesterday",
                                    isAdmin = false,
                                    actions
                                }: AdDetailsStatsProps) {
     // Hide statistics for submitted and rejected ads
-    const showStats = !approvalState || (approvalState !== "submitted" && approvalState !== "rejected");
+    const showStats = !status || (status !== AdStatus.SUBMITTED && status !== AdStatus.REJECTED);
 
     const getHeaderContent = () => {
-        if (approvalState === "submitted") {
+        if (status === AdStatus.SUBMITTED) {
             return {
                 title: isAdmin ? "Ad Review" : "Ad Status",
                 description: isAdmin
@@ -134,7 +134,7 @@ export function AdDetailsStats({
                     : "Your ad is currently under review."
             };
         }
-        if (approvalState === "rejected") {
+        if (status === AdStatus.REJECTED) {
             return {
                 title: isAdmin ? "Rejected Ad" : "Ad Status",
                 description: isAdmin
