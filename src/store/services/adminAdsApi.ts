@@ -1,6 +1,7 @@
 import {createApi} from '@reduxjs/toolkit/query/react';
 import {baseQuery} from './baseQuery';
 import {Ad, AdSearchRequest, AdStatusCount, PaginatedResponse} from '@/models/ad';
+import {AdStatusDetails} from '@/models/ad-status-details';
 
 // Admin-specific ads API service
 export const adminAdsApi = createApi({
@@ -35,6 +36,14 @@ export const adminAdsApi = createApi({
             }),
             providesTags: ['AdminAds'],
         }),
+        // Get Ad By ID (Admin)
+        getAdById: builder.query<AdStatusDetails, number>({
+            query: (id) => ({
+                url: `/admin/ads/${id}`,
+                method: 'GET',
+            }),
+            providesTags: (result, error, id) => [{type: 'AdminAds', id}],
+        }),
     }),
 });
 
@@ -43,4 +52,5 @@ export const {
     useSearchAdsQuery,
     useLazySearchAdsQuery,
     useGetAdStatusCountsQuery,
+    useGetAdByIdQuery,
 } = adminAdsApi;

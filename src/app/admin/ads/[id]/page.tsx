@@ -1,56 +1,43 @@
 'use client'
-import {SiteHeader} from "@/components/site-header";
-import {AdDetailsStats} from "@/app/ads/[id]/components/ad-details-stats";
-import {AdStatusDetails} from "@/app/ads/[id]/components/ad-status-details";
-import {AdStatusDetails as AdStatusDetailsType} from "@/models/ad-status-details";
-import {ActionButton} from "@/components/ui/action-button";
-import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
-import {Badge} from "@/components/ui/badge";
-import {Calendar, CheckCircle, DollarSign, Mail, Shield, TrendingUp, User} from "lucide-react";
-import {RejectAdModal} from "@/app/ads/[id]/components/reject-ad-modal";
-import {MOCK_USERS} from "@/data/mock-users";
-import {useRouter} from "next/navigation";
-
-// Mock data for demonstration - replace with actual API data
-const mockAdStatusData: AdStatusDetailsType = {
-    id: 12345,
-    title: "Summer Sale Campaign 2024",
-    adType: "photo",
-    viewsBought: 50000,
-    price: 0.05,
-    totalPricePaid: 2500,
-    purchaseDate: "2024-06-01",
-    startDate: "2024-06-15",
-    approvalState: "submitted",
-    rejectionReason: "Innapropriate content, your payment will be refunded.",
-    paymentCardLast4: "4242",
-    paymentCardBrand: "visa",
-    currentViews: 35000,
-    servedViews: 12400,
-    username: "johndoe",
-    userId: "u_1", // Changed to match mock user data
-};
+import { SiteHeader } from "@/components/site-header";
+import { AdDetailsStats } from "@/app/ads/[id]/components/ad-details-stats";
+import AdStatusDetails from "@/app/ads/[id]/components/ad-status-details";
+import { ActionButton } from "@/components/ui/action-button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Calendar, CheckCircle, DollarSign, Loader2, Mail, Shield, TrendingUp, User } from "lucide-react";
+import { RejectAdModal } from "@/app/ads/[id]/components/reject-ad-modal";
+import { MOCK_USERS } from "@/data/mock-users";
+import { useRouter, useParams } from "next/navigation";
+import { useGetAdByIdQuery } from "@/store/services/adminAdsApi";
+import { AdStatus } from "@/models/ad";
 
 export default function AdminAdDetailsPage() {
     const router = useRouter();
-    const isSubmitted = mockAdStatusData.approvalState === "submitted";
+    const params = useParams();
+    const adId = Number(params.id);
+
+    const { data: adData, isLoading, error } = useGetAdByIdQuery(adId);
 
     // Get user details from mock data
-    const userData = MOCK_USERS.find(user => user.id === mockAdStatusData.userId);
+    const userData = adData ? MOCK_USERS.find(user => user.id === String(adData.userId)) : null;
+    const isSubmitted = adData?.status === AdStatus.SUBMITTED;
 
     const handleApprove = () => {
-        console.log("Ad approved - ID:", mockAdStatusData.id);
+        console.log("Ad approved - ID:", adData?.id);
         // TODO: Implement API call to approve ad
     };
 
     const handleReject = (reason: string) => {
-        console.log("Ad rejected - ID:", mockAdStatusData.id);
+        console.log("Ad rejected - ID:", adData?.id);
         console.log("Rejection reason:", reason || "No reason provided");
         // TODO: Implement API call to reject ad
     };
 
     const handleViewProfile = () => {
-        router.push(`/admin/users/${mockAdStatusData.userId}`);
+        if (adData) {
+            router.push(`/admin/users/${adData.userId}`);
+        }
     };
 
     const formatCurrency = (amount: number) => {
@@ -68,19 +55,69 @@ export default function AdminAdDetailsPage() {
         });
     };
 
+    if (isLoading) {
+        return (
+            <div>
+                <SiteHeader
+                    title={'Ad Campaign Details'}
+                    description={''}
+                />
+                <div className="flex flex-1 flex-col">
+                    <div className="@container/main flex flex-1 flex-col gap-2">
+                        <Card className="m-4">
+                            <CardContent className="flex items-center justify-center p-12">
+                                <div className="flex flex-col items-center gap-2">
+                                    <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+                                    <p className="text-sm text-muted-foreground">Loading ad details...</p>
+                                </div>
+                            </CardContent>
+                        </Card>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
+    if (error || !adData) {
+        return (
+            <div>
+                <SiteHeader
+                    title={'Ad Campaign Details'}
+                    description={''}
+                />
+                <div className="flex flex-1 flex-col">
+                    <div className="@container/main flex flex-1 flex-col gap-2">
+                        <Card className="m-4">
+                            <CardContent className="p-12">
+                                <div className="flex flex-col items-center gap-2 text-center">
+                                    <p className="text-lg font-semibold text-destructive">Error Loading Ad</p>
+                                    <p className="text-sm text-muted-foreground">
+                                        {error && 'status' in error
+                                            ? `Failed to load ad details. Status: ${error.status}`
+                                            : 'An unexpected error occurred while loading the ad.'}
+                                    </p>
+                                </div>
+                            </CardContent>
+                        </Card>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
     const actions = isSubmitted ? (
         <>
             <ActionButton onClick={handleApprove}>
-                <CheckCircle className="mr-2 h-4 w-4"/>
+                <CheckCircle className="mr-2 h-4 w-4" />
                 Approve
             </ActionButton>
-            <RejectAdModal onReject={handleReject}/>
+            <RejectAdModal onReject={handleReject} />
             <ActionButton
                 onClick={handleViewProfile}
                 variant="default"
                 className="bg-transparent border border-indigo-200 text-indigo-700 hover:bg-indigo-50 dark:border-indigo-800 dark:text-indigo-400 dark:hover:bg-indigo-950/50 shadow-none"
             >
-                <User className="mr-2 h-4 w-4"/>
+                <User className="mr-2 h-4 w-4" />
                 View Profile
             </ActionButton>
         </>
@@ -90,7 +127,7 @@ export default function AdminAdDetailsPage() {
             variant="default"
             className="bg-transparent border border-indigo-200 text-indigo-700 hover:bg-indigo-50 dark:border-indigo-800 dark:text-indigo-400 dark:hover:bg-indigo-950/50 shadow-none"
         >
-            <User className="mr-2 h-4 w-4"/>
+            <User className="mr-2 h-4 w-4" />
             View Profile
         </ActionButton>
     );
@@ -105,7 +142,7 @@ export default function AdminAdDetailsPage() {
                 <div className="@container/main flex flex-1 flex-col gap-2">
                     <div className="flex flex-col gap-4">
                         <AdDetailsStats
-                            approvalState={mockAdStatusData.approvalState}
+                            status={adData.status}
                             isAdmin={true}
                             actions={actions}
                         />
@@ -116,7 +153,7 @@ export default function AdminAdDetailsPage() {
                                 className="m-4 border shadow-sm bg-gradient-to-br from-violet-50/50 to-indigo-50/50 dark:from-violet-950/20 dark:to-indigo-950/20 border-violet-200 dark:border-violet-900">
                                 <CardHeader className="border-b border-violet-200 dark:border-violet-900">
                                     <CardTitle className="text-lg flex items-center gap-2">
-                                        <User className="h-5 w-5 text-violet-600 dark:text-violet-400"/>
+                                        <User className="h-5 w-5 text-violet-600 dark:text-violet-400" />
                                         User Details
                                     </CardTitle>
                                 </CardHeader>
@@ -125,7 +162,7 @@ export default function AdminAdDetailsPage() {
                                         {/* User Name */}
                                         <div className="flex items-start gap-3">
                                             <div className="p-2 rounded-lg bg-background shadow-sm">
-                                                <User className="h-5 w-5 text-violet-600 dark:text-violet-400"/>
+                                                <User className="h-5 w-5 text-violet-600 dark:text-violet-400" />
                                             </div>
                                             <div>
                                                 <p className="text-sm font-medium text-muted-foreground">Name</p>
@@ -136,7 +173,7 @@ export default function AdminAdDetailsPage() {
                                         {/* Email */}
                                         <div className="flex items-start gap-3">
                                             <div className="p-2 rounded-lg bg-background shadow-sm">
-                                                <Mail className="h-5 w-5 text-violet-600 dark:text-violet-400"/>
+                                                <Mail className="h-5 w-5 text-violet-600 dark:text-violet-400" />
                                             </div>
                                             <div>
                                                 <p className="text-sm font-medium text-muted-foreground">Email</p>
@@ -147,7 +184,7 @@ export default function AdminAdDetailsPage() {
                                         {/* Role */}
                                         <div className="flex items-start gap-3">
                                             <div className="p-2 rounded-lg bg-background shadow-sm">
-                                                <Shield className="h-5 w-5 text-violet-600 dark:text-violet-400"/>
+                                                <Shield className="h-5 w-5 text-violet-600 dark:text-violet-400" />
                                             </div>
                                             <div>
                                                 <p className="text-sm font-medium text-muted-foreground">Role</p>
@@ -161,7 +198,7 @@ export default function AdminAdDetailsPage() {
                                         {/* Total Ads */}
                                         <div className="flex items-start gap-3">
                                             <div className="p-2 rounded-lg bg-background shadow-sm">
-                                                <TrendingUp className="h-5 w-5 text-violet-600 dark:text-violet-400"/>
+                                                <TrendingUp className="h-5 w-5 text-violet-600 dark:text-violet-400" />
                                             </div>
                                             <div>
                                                 <p className="text-sm font-medium text-muted-foreground">Total Ads
@@ -173,7 +210,7 @@ export default function AdminAdDetailsPage() {
                                         {/* Total Spent */}
                                         <div className="flex items-start gap-3">
                                             <div className="p-2 rounded-lg bg-background shadow-sm">
-                                                <DollarSign className="h-5 w-5 text-violet-600 dark:text-violet-400"/>
+                                                <DollarSign className="h-5 w-5 text-violet-600 dark:text-violet-400" />
                                             </div>
                                             <div>
                                                 <p className="text-sm font-medium text-muted-foreground">Total Spent</p>
@@ -184,7 +221,7 @@ export default function AdminAdDetailsPage() {
                                         {/* Member Since */}
                                         <div className="flex items-start gap-3">
                                             <div className="p-2 rounded-lg bg-background shadow-sm">
-                                                <Calendar className="h-5 w-5 text-violet-600 dark:text-violet-400"/>
+                                                <Calendar className="h-5 w-5 text-violet-600 dark:text-violet-400" />
                                             </div>
                                             <div>
                                                 <p className="text-sm font-medium text-muted-foreground">Member
@@ -199,7 +236,7 @@ export default function AdminAdDetailsPage() {
 
                         <AdStatusDetails
                             className="m-4"
-                            data={mockAdStatusData}
+                            data={adData}
                             isAdmin={true}
                         />
                     </div>
