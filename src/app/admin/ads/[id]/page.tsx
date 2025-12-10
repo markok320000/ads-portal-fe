@@ -131,7 +131,7 @@ export default function AdminAdDetailsPage() {
                 <CheckCircle className="mr-2 h-4 w-4"/>
                 {isApproving ? 'Approving...' : 'Approve'}
             </ActionButton>
-            <RejectAdModal onReject={handleReject} isLoading={isRejecting}/>
+            <RejectAdModal onReject={handleReject}/>
             <ActionButton
                 onClick={handleViewProfile}
                 variant="default"
