@@ -1,29 +1,31 @@
 'use client'
-import {SiteHeader} from "@/components/site-header";
-import {AdDetailsStats} from "@/app/ads/[id]/components/ad-details-stats";
+import { SiteHeader } from "@/components/site-header";
+import { AdDetailsStats } from "@/app/ads/[id]/components/ad-details-stats";
 import AdStatusDetails from "@/app/ads/[id]/components/ad-status-details";
-import {ActionButton} from "@/components/ui/action-button";
-import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
-import {Badge} from "@/components/ui/badge";
-import {Calendar, CheckCircle, DollarSign, Loader2, Mail, Shield, TrendingUp, User} from "lucide-react";
-import {RejectAdModal} from "@/app/ads/[id]/components/reject-ad-modal";
-import {MOCK_USERS} from "@/data/mock-users";
-import {useParams, useRouter} from "next/navigation";
-import {useApproveAdMutation, useGetAdByIdQuery, useRejectAdMutation} from "@/store/services/adminAdsApi";
-import {AdStatus} from "@/models/ad";
-import {toast} from "sonner";
+import { ActionButton } from "@/components/ui/action-button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Calendar, CheckCircle, DollarSign, Loader2, Mail, Shield, TrendingUp, User } from "lucide-react";
+import { RejectAdModal } from "@/app/ads/[id]/components/reject-ad-modal";
+import { useParams, useRouter } from "next/navigation";
+import { useGetAdByIdQuery, useRejectAdMutation, useApproveAdMutation } from "@/store/services/adminAdsApi";
+import { useGetUserByIdQuery } from "@/store/services/adminUsersApi";
+import { AdStatus } from "@/models/ad";
+import { toast } from "sonner";
 
 export default function AdminAdDetailsPage() {
     const router = useRouter();
     const params = useParams();
     const adId = Number(params.id);
 
-    const {data: adData, isLoading, error} = useGetAdByIdQuery(adId);
-    const [rejectAd, {isLoading: isRejecting}] = useRejectAdMutation();
-    const [approveAd, {isLoading: isApproving}] = useApproveAdMutation();
+    const { data: adData, isLoading, error } = useGetAdByIdQuery(adId);
+    const [rejectAd, { isLoading: isRejecting }] = useRejectAdMutation();
+    const [approveAd, { isLoading: isApproving }] = useApproveAdMutation();
 
-    // Get user details from mock data
-    const userData = adData ? MOCK_USERS.find(user => user.id === String(adData.userId)) : null;
+    const { data: userData, isLoading: isUserLoading } = useGetUserByIdQuery(adData?.userId!, {
+        skip: !adData?.userId,
+    });
+
     const isSubmitted = adData?.status === AdStatus.SUBMITTED;
 
     const handleApprove = async () => {
@@ -32,8 +34,7 @@ export default function AdminAdDetailsPage() {
         try {
             await approveAd(adData.id).unwrap();
             toast.success("Ad approved successfully");
-        } catch (error) {
-            console.error("Failed to approve ad:", error);
+        } catch {
             toast.error("Failed to approve the ad. Please try again.");
         }
     };
@@ -48,47 +49,32 @@ export default function AdminAdDetailsPage() {
             }).unwrap();
 
             toast.success("Ad rejected successfully");
-        } catch (error) {
-            console.error("Failed to reject ad:", error);
+        } catch {
             toast.error("Failed to reject the ad. Please try again.");
         }
     };
 
     const handleViewProfile = () => {
-        if (adData) {
-            router.push(`/admin/users/${adData.userId}`);
-        }
+        if (adData) router.push(`/admin/users/${adData.userId}`);
     };
 
-    const formatCurrency = (amount: number) => {
-        return new Intl.NumberFormat("en-US", {
-            style: "currency",
-            currency: "USD",
-        }).format(amount);
-    };
+    const formatCurrency = (amount: number) =>
+        new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(amount);
 
-    const formatDate = (dateString: string) => {
-        return new Date(dateString).toLocaleDateString("en-US", {
-            year: "numeric",
-            month: "long",
-            day: "numeric",
-        });
-    };
+    const formatDate = (dateString: string) =>
+        new Date(dateString).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
 
-    if (isLoading) {
+    if (isLoading || isUserLoading) {
         return (
             <div>
-                <SiteHeader
-                    title={'Ad Campaign Details'}
-                    description={''}
-                />
+                <SiteHeader title={'Ad Campaign Details'} description={''} />
                 <div className="flex flex-1 flex-col">
                     <div className="@container/main flex flex-1 flex-col gap-2">
                         <Card className="m-4">
                             <CardContent className="flex items-center justify-center p-12">
                                 <div className="flex flex-col items-center gap-2">
-                                    <Loader2 className="h-8 w-8 animate-spin text-muted-foreground"/>
-                                    <p className="text-sm text-muted-foreground">Loading ad details...</p>
+                                    <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+                                    <p className="text-sm text-muted-foreground">Loading details...</p>
                                 </div>
                             </CardContent>
                         </Card>
@@ -101,10 +87,7 @@ export default function AdminAdDetailsPage() {
     if (error || !adData) {
         return (
             <div>
-                <SiteHeader
-                    title={'Ad Campaign Details'}
-                    description={''}
-                />
+                <SiteHeader title={'Ad Campaign Details'} description={''} />
                 <div className="flex flex-1 flex-col">
                     <div className="@container/main flex flex-1 flex-col gap-2">
                         <Card className="m-4">
@@ -128,16 +111,16 @@ export default function AdminAdDetailsPage() {
     const actions = isSubmitted ? (
         <>
             <ActionButton onClick={handleApprove} disabled={isRejecting || isApproving}>
-                <CheckCircle className="mr-2 h-4 w-4"/>
+                <CheckCircle className="mr-2 h-4 w-4" />
                 {isApproving ? 'Approving...' : 'Approve'}
             </ActionButton>
-            <RejectAdModal onReject={handleReject}/>
+            <RejectAdModal onReject={handleReject} />
             <ActionButton
                 onClick={handleViewProfile}
                 variant="default"
                 className="bg-transparent border border-indigo-200 text-indigo-700 hover:bg-indigo-50 dark:border-indigo-800 dark:text-indigo-400 dark:hover:bg-indigo-950/50 shadow-none"
             >
-                <User className="mr-2 h-4 w-4"/>
+                <User className="mr-2 h-4 w-4" />
                 View Profile
             </ActionButton>
         </>
@@ -147,53 +130,42 @@ export default function AdminAdDetailsPage() {
             variant="default"
             className="bg-transparent border border-indigo-200 text-indigo-700 hover:bg-indigo-50 dark:border-indigo-800 dark:text-indigo-400 dark:hover:bg-indigo-950/50 shadow-none"
         >
-            <User className="mr-2 h-4 w-4"/>
+            <User className="mr-2 h-4 w-4" />
             View Profile
         </ActionButton>
     );
 
     return (
         <div>
-            <SiteHeader
-                title={'Ad Campaign Details'}
-                description={''}
-            />
+            <SiteHeader title={'Ad Campaign Details'} description={''} />
             <div className="flex flex-1 flex-col">
                 <div className="@container/main flex flex-1 flex-col gap-2">
                     <div className="flex flex-col gap-4">
-                        <AdDetailsStats
-                            status={adData.status}
-                            isAdmin={true}
-                            actions={actions}
-                        />
+                        <AdDetailsStats status={adData.status} isAdmin={true} actions={actions} />
 
-                        {/* User Details Section */}
-                        {userData && (
-                            <Card
-                                className="m-4 border shadow-sm bg-gradient-to-br from-violet-50/50 to-indigo-50/50 dark:from-violet-950/20 dark:to-indigo-950/20 border-violet-200 dark:border-violet-900">
+                        {userData ? (
+                            <Card className="m-4 border shadow-sm bg-gradient-to-br from-violet-50/50 to-indigo-50/50 dark:from-violet-950/20 dark:to-indigo-950/20 border-violet-200 dark:border-violet-900">
                                 <CardHeader className="border-b border-violet-200 dark:border-violet-900">
                                     <CardTitle className="text-lg flex items-center gap-2">
-                                        <User className="h-5 w-5 text-violet-600 dark:text-violet-400"/>
+                                        <User className="h-5 w-5 text-violet-600 dark:text-violet-400" />
                                         User Details
                                     </CardTitle>
                                 </CardHeader>
                                 <CardContent className="p-6">
                                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                                        {/* User Name */}
                                         <div className="flex items-start gap-3">
                                             <div className="p-2 rounded-lg bg-background shadow-sm">
-                                                <User className="h-5 w-5 text-violet-600 dark:text-violet-400"/>
+                                                <User className="h-5 w-5 text-violet-600 dark:text-violet-400" />
                                             </div>
                                             <div>
                                                 <p className="text-sm font-medium text-muted-foreground">Name</p>
-                                                <p className="text-base font-semibold">{userData.name}</p>
+                                                <p className="text-base font-semibold">{`${userData.firstName} ${userData.lastName}`}</p>
                                             </div>
                                         </div>
 
-                                        {/* Email */}
                                         <div className="flex items-start gap-3">
                                             <div className="p-2 rounded-lg bg-background shadow-sm">
-                                                <Mail className="h-5 w-5 text-violet-600 dark:text-violet-400"/>
+                                                <Mail className="h-5 w-5 text-violet-600 dark:text-violet-400" />
                                             </div>
                                             <div>
                                                 <p className="text-sm font-medium text-muted-foreground">Email</p>
@@ -201,36 +173,31 @@ export default function AdminAdDetailsPage() {
                                             </div>
                                         </div>
 
-                                        {/* Role */}
                                         <div className="flex items-start gap-3">
                                             <div className="p-2 rounded-lg bg-background shadow-sm">
-                                                <Shield className="h-5 w-5 text-violet-600 dark:text-violet-400"/>
+                                                <Shield className="h-5 w-5 text-violet-600 dark:text-violet-400" />
                                             </div>
                                             <div>
                                                 <p className="text-sm font-medium text-muted-foreground">Role</p>
-                                                <Badge
-                                                    className="mt-1 bg-violet-600 hover:bg-violet-700 text-white capitalize">
+                                                <Badge className="mt-1 bg-violet-600 hover:bg-violet-700 text-white capitalize">
                                                     {userData.role}
                                                 </Badge>
                                             </div>
                                         </div>
 
-                                        {/* Total Ads */}
                                         <div className="flex items-start gap-3">
                                             <div className="p-2 rounded-lg bg-background shadow-sm">
-                                                <TrendingUp className="h-5 w-5 text-violet-600 dark:text-violet-400"/>
+                                                <TrendingUp className="h-5 w-5 text-violet-600 dark:text-violet-400" />
                                             </div>
                                             <div>
-                                                <p className="text-sm font-medium text-muted-foreground">Total Ads
-                                                    Purchased</p>
-                                                <p className="text-base font-semibold">{userData.totalPurchasedAds}</p>
+                                                <p className="text-sm font-medium text-muted-foreground">Total Ads Purchased</p>
+                                                <p className="text-base font-semibold">{userData.totalPurchasedAdsCount}</p>
                                             </div>
                                         </div>
 
-                                        {/* Total Spent */}
                                         <div className="flex items-start gap-3">
                                             <div className="p-2 rounded-lg bg-background shadow-sm">
-                                                <DollarSign className="h-5 w-5 text-violet-600 dark:text-violet-400"/>
+                                                <DollarSign className="h-5 w-5 text-violet-600 dark:text-violet-400" />
                                             </div>
                                             <div>
                                                 <p className="text-sm font-medium text-muted-foreground">Total Spent</p>
@@ -238,27 +205,21 @@ export default function AdminAdDetailsPage() {
                                             </div>
                                         </div>
 
-                                        {/* Member Since */}
                                         <div className="flex items-start gap-3">
                                             <div className="p-2 rounded-lg bg-background shadow-sm">
-                                                <Calendar className="h-5 w-5 text-violet-600 dark:text-violet-400"/>
+                                                <Calendar className="h-5 w-5 text-violet-600 dark:text-violet-400" />
                                             </div>
                                             <div>
-                                                <p className="text-sm font-medium text-muted-foreground">Member
-                                                    Since</p>
+                                                <p className="text-sm font-medium text-muted-foreground">Member Since</p>
                                                 <p className="text-base font-semibold">{formatDate(userData.createdAt)}</p>
                                             </div>
                                         </div>
                                     </div>
                                 </CardContent>
                             </Card>
-                        )}
+                        ) : null}
 
-                        <AdStatusDetails
-                            className="m-4"
-                            data={adData}
-                            isAdmin={true}
-                        />
+                        <AdStatusDetails className="m-4" data={adData} isAdmin={true} />
                     </div>
                 </div>
             </div>
