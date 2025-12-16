@@ -36,6 +36,7 @@ export default function AdminDashboardPage() {
                             <h2 className="text-lg font-semibold mb-4">Submitted Ads</h2>
                             <AdsTable
                                 ads={data?.content || []}
+                                isAdmin={true}
                                 viewDetailsPath="/admin/ads"
                             />
                         </div>

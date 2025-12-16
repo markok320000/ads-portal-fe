@@ -160,6 +160,7 @@ export default function UserAdsPage() {
                         onClearFilters={handleClearFilters}
                         counts={counts}
                         isAdmin={false}
+                        viewDetailsPath={"/admin/ads"}
                     />
                 </CardContent>
             </Card>

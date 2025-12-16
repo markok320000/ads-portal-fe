@@ -82,7 +82,7 @@ export function AdminRoute({children, fallback = null}: RouteGuardProps) {
             if (!isAuthenticated) {
                 router.replace('/auth?view=login');
             } else if (!isAdmin) {
-                router.replace('/admin/dashboard');
+                router.replace('/dashboard');
             }
         }
     }, [isAuthenticated, isAdmin, isLoading, router]);

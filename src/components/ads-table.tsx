@@ -1,16 +1,16 @@
 "use client"
 
 import * as React from "react"
-import {Badge} from "@/components/ui/badge"
-import {Tabs, TabsList, TabsTrigger} from "@/components/ui/tabs"
-import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table"
-import {Ad, AdFormatType, AdStatus} from "@/models/ad"
-import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select"
-import {Button} from "@/components/ui/button"
-import {Input} from "@/components/ui/input"
-import {DatePicker} from "@/components/ui/date-picker"
-import {ArrowUpDown, Eye, Search, X} from "lucide-react"
-import {useRouter} from "next/navigation"
+import { Badge } from "@/components/ui/badge"
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { Ad, AdFormatType, AdStatus } from "@/models/ad"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { DatePicker } from "@/components/ui/date-picker"
+import { ArrowUpDown, Eye, Search, X } from "lucide-react"
+import { useRouter } from "next/navigation"
 
 interface AdsTableProps {
     ads: Ad[]
@@ -44,24 +44,24 @@ function getAllCount(counts?: { active: number; submitted: number; completed: nu
 }
 
 export function AdsTable({
-                             ads,
-                             status,
-                             type,
-                             sort,
-                             onStatusChange,
-                             onTypeChange,
-                             onSortChange,
-                             onClearFilters,
-                             counts,
-                             viewDetailsPath,
-                             isAdmin = false,
-                             startDate,
-                             endDate,
-                             searchQuery,
-                             onStartDateChange,
-                             onEndDateChange,
-                             onSearchQueryChange
-                         }: AdsTableProps) {
+    ads,
+    status,
+    type,
+    sort,
+    onStatusChange,
+    onTypeChange,
+    onSortChange,
+    onClearFilters,
+    counts,
+    viewDetailsPath,
+    isAdmin = false,
+    startDate,
+    endDate,
+    searchQuery,
+    onStartDateChange,
+    onEndDateChange,
+    onSearchQueryChange
+}: AdsTableProps) {
     const router = useRouter()
 
     const getStatusVariant = (status: AdStatus) => {
@@ -116,8 +116,8 @@ export function AdsTable({
     const allCount = getAllCount(counts)
 
     const handleViewDetailsClick = (id: number) => {
-        const viewDetailsPath = isAdmin ? `/admin/ads/${id}` : `/ads/${id}`;
-        router.push(viewDetailsPath);
+        const path = viewDetailsPath ? `${viewDetailsPath}/${id}` : (isAdmin ? `/admin/ads/${id}` : `/ads/${id}`);
+        router.push(path);
     }
 
     return (
@@ -135,7 +135,7 @@ export function AdsTable({
                             onValueChange={(val) => onStatusChange?.(val === "all" ? null : val.toUpperCase())}
                         >
                             <SelectTrigger className="w-[150px] lg:hidden">
-                                <SelectValue placeholder="Filter by Status"/>
+                                <SelectValue placeholder="Filter by Status" />
                             </SelectTrigger>
                             <SelectContent>
                                 <SelectItem value="all">All Statuses ({allCount})</SelectItem>
@@ -152,19 +152,19 @@ export function AdsTable({
                             </TabsTrigger>
                             <TabsTrigger value="active">
                                 Active <Badge variant="secondary"
-                                              className="ml-2 rounded-full px-1">{counts?.active || 0}</Badge>
+                                    className="ml-2 rounded-full px-1">{counts?.active || 0}</Badge>
                             </TabsTrigger>
                             <TabsTrigger value="submitted">
                                 Submitted <Badge variant="secondary"
-                                                 className="ml-2 rounded-full px-1">{counts?.submitted || 0}</Badge>
+                                    className="ml-2 rounded-full px-1">{counts?.submitted || 0}</Badge>
                             </TabsTrigger>
                             <TabsTrigger value="completed">
                                 Completed <Badge variant="secondary"
-                                                 className="ml-2 rounded-full px-1">{counts?.completed || 0}</Badge>
+                                    className="ml-2 rounded-full px-1">{counts?.completed || 0}</Badge>
                             </TabsTrigger>
                             <TabsTrigger value="rejected">
                                 Rejected <Badge variant="secondary"
-                                                className="ml-2 rounded-full px-1">{counts?.rejected || 0}</Badge>
+                                    className="ml-2 rounded-full px-1">{counts?.rejected || 0}</Badge>
                             </TabsTrigger>
                         </TabsList>
 
@@ -174,7 +174,7 @@ export function AdsTable({
                                 onValueChange={(val) => onTypeChange?.(val === "all" ? null : val)}
                             >
                                 <SelectTrigger className="w-[150px]">
-                                    <SelectValue placeholder="Filter by Type"/>
+                                    <SelectValue placeholder="Filter by Type" />
                                 </SelectTrigger>
                                 <SelectContent>
                                     <SelectItem value="all">All Types</SelectItem>
@@ -189,7 +189,7 @@ export function AdsTable({
                             {hasFilters && (
                                 <Button variant="ghost" onClick={clearFilters} className="h-8 px-2 lg:px-3">
                                     Reset
-                                    <X className="ml-2 h-4 w-4"/>
+                                    <X className="ml-2 h-4 w-4" />
                                 </Button>
                             )}
                         </div>
@@ -200,7 +200,7 @@ export function AdsTable({
             {isAdmin && (
                 <div className="flex flex-col lg:flex-row lg:items-center gap-4 pb-2">
                     <div className="relative flex-1 w-full lg:max-w-sm">
-                        <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground"/>
+                        <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                         <Input
                             type="text"
                             placeholder="Search by email or user ID..."
@@ -230,7 +230,7 @@ export function AdsTable({
                         onValueChange={(val) => onTypeChange?.(val === "all" ? null : val)}
                     >
                         <SelectTrigger className="w-[150px]">
-                            <SelectValue placeholder="Filter by Type"/>
+                            <SelectValue placeholder="Filter by Type" />
                         </SelectTrigger>
                         <SelectContent>
                             <SelectItem value="all">All Types</SelectItem>
@@ -258,7 +258,7 @@ export function AdsTable({
                                         className="-ml-4 h-8 data-[state=open]:bg-accent"
                                     >
                                         Submitted Date
-                                        <ArrowUpDown className="ml-2 h-4 w-4"/>
+                                        <ArrowUpDown className="ml-2 h-4 w-4" />
                                     </Button>
                                 ) : (
                                     "Submitted Date"
@@ -277,9 +277,9 @@ export function AdsTable({
                                 <TableCell colSpan={9} className="h-24 text-center">
                                     <div className="flex flex-col items-center justify-center gap-2 py-8">
                                         <svg className="w-12 h-12 text-gray-300" fill="none" stroke="currentColor"
-                                             viewBox="0 0 24 24">
+                                            viewBox="0 0 24 24">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
-                                                  d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"/>
+                                                d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
                                         </svg>
                                         <p className="font-medium text-muted-foreground">No ads found</p>
                                     </div>
@@ -291,7 +291,7 @@ export function AdsTable({
                                     <TableCell className="font-medium">{ad.title}</TableCell>
                                     <TableCell>
                                         <Badge variant="outline"
-                                               className={`px-2.5 py-0.5 capitalize font-medium ${getTypeColor(ad.formatType)}`}>
+                                            className={`px-2.5 py-0.5 capitalize font-medium ${getTypeColor(ad.formatType)}`}>
                                             {ad.formatType}
                                         </Badge>
                                     </TableCell>
@@ -304,7 +304,7 @@ export function AdsTable({
                                     {isAdmin && <TableCell className="text-muted-foreground">{ad.userId}</TableCell>}
                                     <TableCell>
                                         <Badge variant={getStatusVariant(ad.status)}
-                                               className="px-2.5 py-0.5 capitalize font-medium">
+                                            className="px-2.5 py-0.5 capitalize font-medium">
                                             {ad.status}
                                         </Badge>
                                     </TableCell>
@@ -315,7 +315,7 @@ export function AdsTable({
                                             onClick={() => handleViewDetailsClick(ad.id)}
                                         >
                                             View Details
-                                            <Eye className="ml-2 h-4 w-4"/>
+                                            <Eye className="ml-2 h-4 w-4" />
                                         </Button>
                                     </TableCell>
                                 </TableRow>
