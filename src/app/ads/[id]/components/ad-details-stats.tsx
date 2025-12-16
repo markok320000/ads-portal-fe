@@ -1,10 +1,10 @@
-import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import * as React from 'react';
-import {ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent} from "@/components/ui/chart";
-import {CartesianGrid, Line, LineChart, XAxis} from "recharts";
-import {VerticalBarCard} from "@/app/ads/[id]/components/vertical-bar-card";
-import {TotalViewsCard} from "@/app/ads/[id]/components/total-views-card";
-import {AdDailyStatsResponse, AdStatus} from "@/models/ad";
+import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
+import { CartesianGrid, Line, LineChart, XAxis } from "recharts";
+import { VerticalBarCard } from "@/app/ads/[id]/components/vertical-bar-card";
+import { TotalViewsCard } from "@/app/ads/[id]/components/total-views-card";
+import { AdDailyStatsResponse, AdStatus } from "@/models/ad";
 
 const chartConfig = {
     viewsCount: {
@@ -23,13 +23,13 @@ interface AdDetailsStatsProps {
 }
 
 export function AdDetailsStats({
-                                   status,
-                                   totalViewsCardTitle = "Today's Views",
-                                   comparisonText = "from yesterday",
-                                   isAdmin = false,
-                                   actions,
-                                   stats
-                               }: AdDetailsStatsProps) {
+    status,
+    totalViewsCardTitle = "Today's Views",
+    comparisonText = "from yesterday",
+    isAdmin = false,
+    actions,
+    stats
+}: AdDetailsStatsProps) {
     // Hide statistics for submitted and rejected ads
     const showStats = !status || (status !== AdStatus.SUBMITTED && status !== AdStatus.REJECTED);
 
@@ -58,7 +58,7 @@ export function AdDetailsStats({
         };
     };
 
-    const {title, description} = getHeaderContent();
+    const { title, description } = getHeaderContent();
 
     return (
         <Card className="py-0 border-none shadow-none rounded-none">
@@ -78,14 +78,14 @@ export function AdDetailsStats({
                 {showStats && (
                     <div className="flex flex-col sm:flex-row gap-4 w-full lg:w-auto">
                         <TotalViewsCard title={totalViewsCardTitle}
-                                        currentValue={stats?.todaysViews || 0}
-                                        previousValue={0} // TODO: Calculate or fetch delta
-                                        comparisonText={comparisonText}
-                                        className={'flex-1 sm:min-w-[180px] lg:min-w-48 lg:max-w-48'}/>
+                            currentValue={stats?.todaysViews || 0}
+                            previousValue={stats?.yesterdaysViews || 0}
+                            comparisonText={comparisonText}
+                            className={'flex-1 sm:min-w-[180px] lg:min-w-48 lg:max-w-48'} />
                         <VerticalBarCard title={"Served Views"}
-                                         current={stats?.servedViews || 0}
-                                         max={stats?.viewsBought || 0}
-                                         className={"flex-1 sm:min-w-[180px] lg:min-w-48 lg:max-w-48"}/>
+                            current={stats?.servedViews || 0}
+                            max={stats?.viewsBought || 0}
+                            className={"flex-1 sm:min-w-[180px] lg:min-w-48 lg:max-w-48"} />
                     </div>
                 )}
             </CardHeader>
@@ -97,13 +97,13 @@ export function AdDetailsStats({
                     >
                         <LineChart
                             accessibilityLayer
-                            data={stats?.dailyStats || []}
+                            data={stats?.dailyStats?.slice().reverse() || []}
                             margin={{
                                 left: 12,
                                 right: 12,
                             }}
                         >
-                            <CartesianGrid vertical={false} strokeDasharray="3 3" className="stroke-muted"/>
+                            <CartesianGrid vertical={false} strokeDasharray="3 3" className="stroke-muted" />
                             <XAxis
                                 dataKey="date"
                                 tickLine={false}

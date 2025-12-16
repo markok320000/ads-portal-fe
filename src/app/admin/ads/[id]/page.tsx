@@ -9,6 +9,7 @@ import { Calendar, CheckCircle, DollarSign, Loader2, Mail, Shield, TrendingUp, U
 import { RejectAdModal } from "@/app/ads/[id]/components/reject-ad-modal";
 import { useParams, useRouter } from "next/navigation";
 import { useGetAdByIdQuery, useRejectAdMutation, useApproveAdMutation } from "@/store/services/adminAdsApi";
+import { useGetAdDailyStatsQuery } from "@/store/services/adsApi";
 import { useGetUserByIdQuery } from "@/store/services/adminUsersApi";
 import { AdStatus } from "@/models/ad";
 import { toast } from "sonner";
@@ -19,6 +20,7 @@ export default function AdminAdDetailsPage() {
     const adId = Number(params.id);
 
     const { data: adData, isLoading, error } = useGetAdByIdQuery(adId);
+    const { data: statsData } = useGetAdDailyStatsQuery({ id: adId });
     const [rejectAd, { isLoading: isRejecting }] = useRejectAdMutation();
     const [approveAd, { isLoading: isApproving }] = useApproveAdMutation();
 
@@ -141,7 +143,7 @@ export default function AdminAdDetailsPage() {
             <div className="flex flex-1 flex-col">
                 <div className="@container/main flex flex-1 flex-col gap-2">
                     <div className="flex flex-col gap-4">
-                        <AdDetailsStats status={adData.status} isAdmin={true} actions={actions} />
+                        <AdDetailsStats status={adData.status} isAdmin={true} actions={actions} stats={statsData} />
 
                         {userData ? (
                             <Card className="m-4 border shadow-sm bg-gradient-to-br from-violet-50/50 to-indigo-50/50 dark:from-violet-950/20 dark:to-indigo-950/20 border-violet-200 dark:border-violet-900">

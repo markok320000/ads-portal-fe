@@ -95,6 +95,7 @@ export interface AdDailyStatsResponse {
     viewsBought: number;
     servedViews: number;
     todaysViews: number;
+    yesterdaysViews: number;
     dailyStats: AdDailyStat[];
 }
 
