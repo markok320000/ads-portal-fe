@@ -1,7 +1,7 @@
-import {useEffect, useState} from "react";
-import {AdFormatDto, AdFormatType} from "@/data/adFormats";
-import {useSearchParams} from "next/navigation";
-import {useGetAdFormatsQuery} from "@/store/services/adFormatsApi";
+import { useEffect, useState, useMemo } from "react";
+import { AdFormatDto, AdFormatType } from "@/data/adFormats";
+import { useSearchParams } from "next/navigation";
+import { useGetAdFormatsQuery } from "@/store/services/adFormatsApi";
 
 export interface CampaignDetails {
     name: string;
@@ -25,8 +25,8 @@ export function useCampaignCreator() {
     const [currentStep, setCurrentStep] = useState(0);
 
     // 2. Data State
-    const {data: apiAdFormats, isLoading} = useGetAdFormatsQuery();
-    const adFormats = apiAdFormats || [];
+    const { data: apiAdFormats, isLoading } = useGetAdFormatsQuery();
+    const adFormats = useMemo(() => apiAdFormats || [], [apiAdFormats]);
 
     // Default to URL param -> PHOTO -> First Option
     const [selectedAdFormat, setSelectedAdFormat] = useState<AdFormatDto | null>(null);

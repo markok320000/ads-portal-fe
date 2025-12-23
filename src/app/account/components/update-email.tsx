@@ -1,26 +1,26 @@
 'use client'
 
-import React, {useState} from 'react'
-import {Card, CardContent, CardDescription, CardHeader, CardTitle} from '@/components/ui/card'
-import {Input} from '@/components/ui/input'
-import {Label} from '@/components/ui/label'
-import {Button} from '@/components/ui/button'
-import {Mail} from 'lucide-react'
-import {toast} from 'sonner'
-import {useRequestEmailUpdateMutation, useVerifyEmailUpdateMutation} from '@/store/services/userApi'
+import React, { useState } from 'react'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Button } from '@/components/ui/button'
+import { Mail } from 'lucide-react'
+import { toast } from 'sonner'
+import { useRequestEmailUpdateMutation, useVerifyEmailUpdateMutation } from '@/store/services/userApi'
 
 interface UpdateEmailProps {
     currentEmail?: string
 }
 
-export const UpdateEmail: React.FC<UpdateEmailProps> = ({currentEmail}) => {
+export const UpdateEmail: React.FC<UpdateEmailProps> = ({ currentEmail }) => {
     const [newEmail, setNewEmail] = useState('')
     const [currentPassword, setCurrentPassword] = useState('')
     const [verificationCode, setVerificationCode] = useState('')
     const [isVerificationStep, setIsVerificationStep] = useState(false)
 
-    const [requestEmailUpdate, {isLoading: isRequesting}] = useRequestEmailUpdateMutation()
-    const [verifyEmailUpdate, {isLoading: isVerifying}] = useVerifyEmailUpdateMutation()
+    const [requestEmailUpdate, { isLoading: isRequesting }] = useRequestEmailUpdateMutation()
+    const [verifyEmailUpdate, { isLoading: isVerifying }] = useVerifyEmailUpdateMutation()
 
     const handleRequestUpdate = async (e: React.FormEvent) => {
         e.preventDefault()
@@ -31,9 +31,10 @@ export const UpdateEmail: React.FC<UpdateEmailProps> = ({currentEmail}) => {
             }).unwrap()
             setIsVerificationStep(true)
             toast.success('Verification code sent to your new email!')
-        } catch (error: any) {
+        } catch (error) {
             console.error('Request email update error:', error)
-            const errorMessage = error?.data?.message || 'Failed to request email update.'
+            const err = error as { data?: { message?: string } }
+            const errorMessage = err?.data?.message || 'Failed to request email update.'
             toast.error(errorMessage)
         }
     }
@@ -50,9 +51,10 @@ export const UpdateEmail: React.FC<UpdateEmailProps> = ({currentEmail}) => {
             setCurrentPassword('')
             setVerificationCode('')
             setIsVerificationStep(false)
-        } catch (error: any) {
+        } catch (error) {
             console.error('Verify email update error:', error)
-            const errorMessage = error?.data?.message || 'Failed to verify email update.'
+            const err = error as { data?: { message?: string } }
+            const errorMessage = err?.data?.message || 'Failed to verify email update.'
             toast.error(errorMessage)
         }
     }
@@ -61,7 +63,7 @@ export const UpdateEmail: React.FC<UpdateEmailProps> = ({currentEmail}) => {
         <Card className="shadow-md transition-all duration-300">
             <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                    <Mail className="h-5 w-5 text-primary"/>
+                    <Mail className="h-5 w-5 text-primary" />
                     Change Email
                 </CardTitle>
                 <CardDescription>

@@ -1,17 +1,17 @@
 "use client"
 
-import {SiteHeader} from "@/components/site-header";
-import {AdsTable} from "@/components/ads-table";
-import {useAdsParams} from "@/hooks/use-ads-params";
+import { SiteHeader } from "@/components/site-header";
+import { AdsTable } from "@/components/ads-table";
+import { useAdsParams } from "@/hooks/use-ads-params";
 
-import {useUser} from "@/hooks/use-user";
-import {UserRole} from "@/models/user-role";
+import { useUser } from "@/hooks/use-user";
+import { UserRole } from "@/models/user-role";
 
-import {useGetAdStatusCountsByUserQuery, useSearchAdsQuery} from "@/store/services/adsApi";
-import {AdFormatType, AdStatus} from "@/models/ad";
+import { useGetAdStatusCountsByUserQuery, useSearchAdsQuery } from "@/store/services/adsApi";
+import { AdFormatType, AdStatus } from "@/models/ad";
 
 export default function AdsPage() {
-    const {user} = useUser();
+    const { user } = useUser();
     const {
         status,
         type,
@@ -31,7 +31,7 @@ export default function AdsPage() {
     } = useAdsParams();
 
     // For regular users, enforce userId to match authenticated user
-    const {data, isLoading} = useSearchAdsQuery({
+    const { data } = useSearchAdsQuery({
         status: status && status !== 'null' ? (status as AdStatus) : undefined,
         types: type && type !== 'null' ? [type as AdFormatType] : undefined,
         sort,
@@ -44,7 +44,7 @@ export default function AdsPage() {
     });
 
     // Use user-specific counts for regular users, all counts for admins
-    const {data: statusCountsData} = useGetAdStatusCountsByUserQuery()
+    const { data: statusCountsData } = useGetAdStatusCountsByUserQuery()
 
     // Calculate counts from status counts API
     const counts = {

@@ -1,6 +1,6 @@
-import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
-import {Badge} from "@/components/ui/badge";
-import {clsx} from "clsx";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { clsx } from "clsx";
 import {
     AlertCircle,
     Calendar,
@@ -14,7 +14,7 @@ import {
     Video
 } from "lucide-react";
 import * as React from "react";
-import {AdStatusDetails as AdStatusDetailsType} from "@/models/ad-status-details";
+import { AdStatusDetails as AdStatusDetailsType } from "@/models/ad-status-details";
 
 interface AdStatusDetailsProps {
     data: AdStatusDetailsType;
@@ -22,7 +22,7 @@ interface AdStatusDetailsProps {
     isAdmin?: boolean;
 }
 
-export default function AdStatusDetails({data, className, isAdmin = false}: AdStatusDetailsProps) {
+export default function AdStatusDetails({ data, className, isAdmin = false }: AdStatusDetailsProps) {
     const getStatusConfig = () => {
         switch (data.status) {
             case "ACTIVE":
@@ -93,7 +93,7 @@ export default function AdStatusDetails({data, className, isAdmin = false}: AdSt
                 {(hasMedia || hasText) && (
                     <div className="space-y-4">
                         <div className="flex items-center gap-2 pb-2 border-b">
-                            <FileText className="h-5 w-5 text-primary"/>
+                            <FileText className="h-5 w-5 text-primary" />
                             <h3 className="text-lg font-semibold">Ad Content Preview</h3>
                         </div>
 
@@ -101,7 +101,7 @@ export default function AdStatusDetails({data, className, isAdmin = false}: AdSt
                         {hasText && (
                             <div className="rounded-lg border bg-card p-4">
                                 <div className="flex items-center gap-2 mb-3">
-                                    <FileText className="h-4 w-4 text-muted-foreground"/>
+                                    <FileText className="h-4 w-4 text-muted-foreground" />
                                     <span className="text-sm font-medium text-muted-foreground">Text Content</span>
                                 </div>
                                 <p className="text-sm leading-relaxed whitespace-pre-wrap">
@@ -114,7 +114,7 @@ export default function AdStatusDetails({data, className, isAdmin = false}: AdSt
                         {data.imageUrl && (
                             <div className="rounded-lg border bg-card p-4">
                                 <div className="flex items-center gap-2 mb-3">
-                                    <ImageIcon className="h-4 w-4 text-muted-foreground"/>
+                                    <ImageIcon className="h-4 w-4 text-muted-foreground" />
                                     <span className="text-sm font-medium text-muted-foreground">Image</span>
                                 </div>
                                 <div className="rounded-lg overflow-hidden bg-muted">
@@ -134,7 +134,7 @@ export default function AdStatusDetails({data, className, isAdmin = false}: AdSt
                         {data.videoUrl && (
                             <div className="rounded-lg border bg-card p-4">
                                 <div className="flex items-center gap-2 mb-3">
-                                    <Video className="h-4 w-4 text-muted-foreground"/>
+                                    <Video className="h-4 w-4 text-muted-foreground" />
                                     <span className="text-sm font-medium text-muted-foreground">Video</span>
                                 </div>
                                 <div className="rounded-lg overflow-hidden bg-black">
@@ -143,7 +143,7 @@ export default function AdStatusDetails({data, className, isAdmin = false}: AdSt
                                         className="w-full h-auto max-h-96"
                                         preload="metadata"
                                     >
-                                        <source src={data.videoUrl}/>
+                                        <source src={data.videoUrl} />
                                         Your browser does not support the video tag.
                                     </video>
                                 </div>
@@ -155,7 +155,7 @@ export default function AdStatusDetails({data, className, isAdmin = false}: AdSt
                 {/* Ad Details Section */}
                 <div>
                     <div className="flex items-center gap-2 pb-2 mb-4 border-b">
-                        <Info className="h-5 w-5 text-primary"/>
+                        <Info className="h-5 w-5 text-primary" />
                         <h3 className="text-lg font-semibold">Ad Details</h3>
                     </div>
 
@@ -163,7 +163,7 @@ export default function AdStatusDetails({data, className, isAdmin = false}: AdSt
                         {/* Format Type */}
                         <div className="flex items-start gap-3">
                             <div className="p-2 rounded-lg bg-background">
-                                <TrendingUp className="h-5 w-5 text-muted-foreground"/>
+                                <TrendingUp className="h-5 w-5 text-muted-foreground" />
                             </div>
                             <div>
                                 <p className="text-sm font-medium text-muted-foreground">Format Type</p>
@@ -174,7 +174,7 @@ export default function AdStatusDetails({data, className, isAdmin = false}: AdSt
                         {/* Views Bought */}
                         <div className="flex items-start gap-3">
                             <div className="p-2 rounded-lg bg-background">
-                                <Eye className="h-5 w-5 text-muted-foreground"/>
+                                <Eye className="h-5 w-5 text-muted-foreground" />
                             </div>
                             <div>
                                 <p className="text-sm font-medium text-muted-foreground">Views Bought</p>
@@ -185,7 +185,7 @@ export default function AdStatusDetails({data, className, isAdmin = false}: AdSt
                         {/* Total Price */}
                         <div className="flex items-start gap-3">
                             <div className="p-2 rounded-lg bg-background">
-                                <DollarSign className="h-5 w-5 text-muted-foreground"/>
+                                <DollarSign className="h-5 w-5 text-muted-foreground" />
                             </div>
                             <div>
                                 <p className="text-sm font-medium text-muted-foreground">Total Price</p>
@@ -196,7 +196,7 @@ export default function AdStatusDetails({data, className, isAdmin = false}: AdSt
                         {/* Submitted Date */}
                         <div className="flex items-start gap-3">
                             <div className="p-2 rounded-lg bg-background">
-                                <Calendar className="h-5 w-5 text-muted-foreground"/>
+                                <Calendar className="h-5 w-5 text-muted-foreground" />
                             </div>
                             <div>
                                 <p className="text-sm font-medium text-muted-foreground">Submitted Date</p>
@@ -207,7 +207,7 @@ export default function AdStatusDetails({data, className, isAdmin = false}: AdSt
                         {/* Start Date */}
                         <div className="flex items-start gap-3">
                             <div className="p-2 rounded-lg bg-background">
-                                <Calendar className="h-5 w-5 text-muted-foreground"/>
+                                <Calendar className="h-5 w-5 text-muted-foreground" />
                             </div>
                             <div>
                                 <p className="text-sm font-medium text-muted-foreground">Start Date</p>
@@ -218,7 +218,7 @@ export default function AdStatusDetails({data, className, isAdmin = false}: AdSt
                         {/* Payment Method */}
                         <div className="flex items-start gap-3">
                             <div className="p-2 rounded-lg bg-background">
-                                <CreditCard className="h-5 w-5 text-muted-foreground"/>
+                                <CreditCard className="h-5 w-5 text-muted-foreground" />
                             </div>
                             <div>
                                 <p className="text-sm font-medium text-muted-foreground">Payment Method</p>
@@ -235,7 +235,7 @@ export default function AdStatusDetails({data, className, isAdmin = false}: AdSt
                     <div
                         className="rounded-lg bg-red-100 dark:bg-red-950/30 border border-red-200 dark:border-red-900 p-4">
                         <div className="flex items-start gap-3">
-                            <AlertCircle className="h-5 w-5 text-red-600 dark:text-red-400 mt-0.5 flex-shrink-0"/>
+                            <AlertCircle className="h-5 w-5 text-red-600 dark:text-red-400 mt-0.5 flex-shrink-0" />
                             <div>
                                 <h3 className="text-sm font-semibold text-red-900 dark:text-red-100">
                                     Rejection Reason
@@ -253,14 +253,14 @@ export default function AdStatusDetails({data, className, isAdmin = false}: AdSt
                     <div
                         className="rounded-lg bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900 p-4">
                         <div className="flex items-start gap-3">
-                            <Info className="h-5 w-5 text-amber-600 dark:text-amber-400 mt-0.5 flex-shrink-0"/>
+                            <Info className="h-5 w-5 text-amber-600 dark:text-amber-400 mt-0.5 flex-shrink-0" />
                             <div>
                                 <h3 className="text-sm font-semibold text-amber-900 dark:text-amber-100">
                                     Ad Under Review
                                 </h3>
                                 <p className="text-sm text-amber-800 dark:text-amber-200 mt-1">
                                     Your ad is currently being reviewed. This process typically takes 1-2 days maximum.
-                                    You'll be notified via email once your ad is approved and starts running.
+                                    You&apos;ll be notified via email once your ad is approved and starts running.
                                 </p>
                             </div>
                         </div>

@@ -1,15 +1,14 @@
 'use client';
-import {SiteHeader} from "@/components/site-header"
+import { SiteHeader } from "@/components/site-header"
 import AdCampaignSelector from "@/app/campaign/components/ad-campaign-selector";
-import {ClickableStepper} from "@/components/clickable-stepper";
-import {useCampaignCreator} from "@/hooks/use-campaign-creator";
+import { ClickableStepper } from "@/components/clickable-stepper";
+import { useCampaignCreator } from "@/hooks/use-campaign-creator";
 import CampaignConfiguration from "@/app/campaign/components/campaign-configuration";
 import StripePayment from "@/app/campaign/components/stripe-payment";
 
 export default function Page() {
     const {
         currentStep,
-        goToStep,
         nextStep,
         selectedAdFormat,
         setSelectedAdFormat,

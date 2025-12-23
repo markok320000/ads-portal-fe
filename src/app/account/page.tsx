@@ -1,16 +1,16 @@
 'use client'
 
-import React, {useState} from 'react'
-import {Separator} from '@/components/ui/separator'
-import {useUser} from '@/hooks/use-user'
-import {UserRole} from '@/models/user-role'
-import {EmailVerification} from './components/email-verification'
-import {ChangePassword} from './components/change-password'
-import {PhoneSettings} from './components/phone-settings'
-import {EmailSettings} from './components/email-settings'
-import {UpdateEmail} from './components/update-email'
-import {toast} from 'sonner'
-import {SiteHeader} from '@/components/site-header'
+import React, { useState } from 'react'
+import { Separator } from '@/components/ui/separator'
+import { useUser } from '@/hooks/use-user'
+import { UserRole } from '@/models/user-role'
+import { EmailVerification } from './components/email-verification'
+import { ChangePassword } from './components/change-password'
+import { PhoneSettings } from './components/phone-settings'
+import { EmailSettings } from './components/email-settings'
+import { UpdateEmail } from './components/update-email'
+import { toast } from 'sonner'
+import { SiteHeader } from '@/components/site-header'
 import {
     useChangePasswordMutation,
     useGetCurrentUserQuery,
@@ -20,18 +20,18 @@ import {
 } from '@/store/services/userApi'
 
 export default function AccountSettingsPage() {
-    const {user} = useUser()
+    const { user } = useUser()
     const [verificationError, setVerificationError] = useState<string | undefined>()
 
     // Fetch current user data from API
-    const {data: currentUser, isLoading: isLoadingUser} = useGetCurrentUserQuery()
+    const { data: currentUser, isLoading: isLoadingUser } = useGetCurrentUserQuery()
 
     // Email verification mutations
-    const [sendVerificationEmail, {isLoading: isSendingVerification}] = useSendVerificationEmailMutation()
+    const [sendVerificationEmail, { isLoading: isSendingVerification }] = useSendVerificationEmailMutation()
     const [verifyEmail] = useVerifyEmailMutation()
 
     // Change password mutation
-    const [changePassword, {isLoading: isChangingPassword}] = useChangePasswordMutation()
+    const [changePassword, { isLoading: isChangingPassword }] = useChangePasswordMutation()
 
     // Marketing preferences mutation
     const [updateMarketingPreferences] = useUpdateMarketingPreferencesMutation()
@@ -40,11 +40,12 @@ export default function AccountSettingsPage() {
     const handleVerifyEmail = async (token: string) => {
         try {
             setVerificationError(undefined)
-            await verifyEmail({token}).unwrap()
+            await verifyEmail({ token }).unwrap()
             toast.success('Email verified successfully!')
-        } catch (error: any) {
+        } catch (error) {
             console.error('Email verification error:', error)
-            const errorMessage = error?.data?.message || 'Failed to verify email. Please check your code and try again.'
+            const err = error as { data?: { message?: string } }
+            const errorMessage = err?.data?.message || 'Failed to verify email. Please check your code and try again.'
             setVerificationError(errorMessage)
             toast.error(errorMessage)
         }
@@ -55,9 +56,10 @@ export default function AccountSettingsPage() {
             setVerificationError(undefined)
             await sendVerificationEmail().unwrap()
             toast.success('Verification email sent!')
-        } catch (error: any) {
+        } catch (error) {
             console.error('Send verification error:', error)
-            const errorMessage = error?.data?.message || 'Failed to send verification email. Please try again.'
+            const err = error as { data?: { message?: string } }
+            const errorMessage = err?.data?.message || 'Failed to send verification email. Please try again.'
             setVerificationError(errorMessage)
             toast.error(errorMessage)
         }
@@ -71,9 +73,10 @@ export default function AccountSettingsPage() {
                 confirmPassword: newPassword
             }).unwrap()
             toast.success('Password changed successfully!')
-        } catch (error: any) {
+        } catch (error) {
             console.error('Change password error:', error)
-            const errorMessage = error?.data?.message || 'Failed to change password. Please try again.'
+            const err = error as { data?: { message?: string } }
+            const errorMessage = err?.data?.message || 'Failed to change password. Please try again.'
             toast.error(errorMessage)
         }
     }
@@ -98,11 +101,12 @@ export default function AccountSettingsPage() {
 
     const handleUpdateMarketing = async (marketing: boolean) => {
         try {
-            await updateMarketingPreferences({subscribedToMarketingEmails: marketing}).unwrap()
+            await updateMarketingPreferences({ subscribedToMarketingEmails: marketing }).unwrap()
             toast.success('Marketing preferences updated!')
-        } catch (error: any) {
+        } catch (error) {
             console.error('Update marketing preferences error:', error)
-            const errorMessage = error?.data?.message || 'Failed to update marketing preferences. Please try again.'
+            const err = error as { data?: { message?: string } }
+            const errorMessage = err?.data?.message || 'Failed to update marketing preferences. Please try again.'
             toast.error(errorMessage)
         }
     }
@@ -129,7 +133,7 @@ export default function AccountSettingsPage() {
             />
             {/* Added max-w-4xl and mx-auto to center content with max width */}
             <div className="max-w-4xl mx-auto px-4 lg:px-6 py-4 md:gap-6 md:py-6 space-y-6">
-                <Separator/>
+                <Separator />
 
                 {/* Email Verification */}
                 <EmailVerification
@@ -141,17 +145,17 @@ export default function AccountSettingsPage() {
                     sending={isSendingVerification}
                 />
 
-                <Separator/>
+                <Separator />
 
                 {/* Change Password */}
-                <ChangePassword onChangePassword={handleChangePassword} loading={isChangingPassword}/>
+                <ChangePassword onChangePassword={handleChangePassword} loading={isChangingPassword} />
 
-                <Separator/>
+                <Separator />
 
                 {/* Update Email */}
-                <UpdateEmail currentEmail={currentUser?.email ?? user?.email}/>
+                <UpdateEmail currentEmail={currentUser?.email ?? user?.email} />
 
-                <Separator/>
+                <Separator />
 
                 {/* Email Settings */}
                 <EmailSettings
@@ -161,7 +165,7 @@ export default function AccountSettingsPage() {
 
                 {user?.role === UserRole.ADMIN && (
                     <>
-                        <Separator/>
+                        <Separator />
                         <PhoneSettings
                             user={{
                                 phoneNumber: currentUser?.phoneNumber ?? null,

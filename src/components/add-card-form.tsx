@@ -1,19 +1,19 @@
 "use client"
 
-import {CardElement, useElements, useStripe} from "@stripe/react-stripe-js";
-import {useState} from "react";
-import {Label} from "@/components/ui/label";
-import {Input} from "@/components/ui/input";
-import {Lock} from "lucide-react";
-import {ActionButton} from "./ui/action-button";
-import {useAddPaymentMethodMutation} from "@/store/services/paymentApi";
-import {toast} from "sonner";
+import { CardElement, useElements, useStripe } from "@stripe/react-stripe-js";
+import { useState } from "react";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Lock } from "lucide-react";
+import { ActionButton } from "./ui/action-button";
+import { useAddPaymentMethodMutation } from "@/store/services/paymentApi";
+import { toast } from "sonner";
 
 interface AddCardFormProps {
     onSuccess?: () => void;
 }
 
-export function AddCardForm({onSuccess}: AddCardFormProps) {
+export function AddCardForm({ onSuccess }: AddCardFormProps) {
     const stripe = useStripe();
     const elements = useElements();
     const [isLoading, setIsLoading] = useState(false);
@@ -30,21 +30,21 @@ export function AddCardForm({onSuccess}: AddCardFormProps) {
         const nameInput = (document.getElementById('name') as HTMLInputElement).value;
 
         if (cardElement) {
-            const {error, paymentMethod} = await stripe.createPaymentMethod({
+            const { error, paymentMethod } = await stripe.createPaymentMethod({
                 type: 'card',
                 card: cardElement,
-                billing_details: {name: nameInput},
+                billing_details: { name: nameInput },
             });
 
             if (error) {
                 toast.error(error.message || "Failed to create payment method");
             } else {
                 try {
-                    await addPaymentMethod({paymentMethodId: paymentMethod.id}).unwrap();
+                    await addPaymentMethod({ paymentMethodId: paymentMethod.id }).unwrap();
                     toast.success("Payment method added successfully");
                     cardElement.clear();
                     onSuccess?.();
-                } catch (apiError) {
+                } catch {
                     toast.error("Failed to save payment method on server");
                 }
             }
@@ -57,7 +57,7 @@ export function AddCardForm({onSuccess}: AddCardFormProps) {
         <form onSubmit={handleSubmit} className="grid gap-4 py-4">
             <div className="grid gap-2">
                 <Label htmlFor="name">Name on Card</Label>
-                <Input id="name" placeholder="John Doe"/>
+                <Input id="name" placeholder="John Doe" />
             </div>
             <div className="grid gap-2">
                 <Label>Card Details</Label>
@@ -68,15 +68,15 @@ export function AddCardForm({onSuccess}: AddCardFormProps) {
                                 base: {
                                     fontSize: '16px',
                                     color: '#424770',
-                                    '::placeholder': {color: '#aab7c4'},
+                                    '::placeholder': { color: '#aab7c4' },
                                 },
-                                invalid: {color: '#9e2146'},
+                                invalid: { color: '#9e2146' },
                             },
                         }}
                     />
                 </div>
                 <div className="flex items-center gap-2 mt-1 text-xs text-slate-500">
-                    <Lock className="w-3 h-3"/>
+                    <Lock className="w-3 h-3" />
                     <span>Payments processed securely by</span>
                     <img
                         src="https://upload.wikimedia.org/wikipedia/commons/b/ba/Stripe_Logo%2C_revised_2016.svg"

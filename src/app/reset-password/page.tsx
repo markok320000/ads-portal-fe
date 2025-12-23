@@ -1,15 +1,15 @@
 "use client";
 
-import React, {Suspense, useEffect, useState} from "react";
-import {useRouter, useSearchParams} from "next/navigation";
-import {useForm} from "react-hook-form";
-import {AlertTriangle, CheckCircle2, Eye, EyeOff, KeyRound, Shield} from "lucide-react";
-import {Button} from "@/components/ui/button";
-import {Input} from "@/components/ui/input";
-import {Label} from "@/components/ui/label";
-import {Alert, AlertDescription} from "@/components/ui/alert";
-import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
-import {useResetPasswordMutation} from "@/store/services/userApi";
+import React, { Suspense, useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { AlertTriangle, CheckCircle2, Eye, EyeOff, KeyRound, Shield } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { useResetPasswordMutation } from "@/store/services/userApi";
 
 interface ResetPasswordForm {
     newPassword: string;
@@ -20,14 +20,14 @@ function ResetPasswordContent() {
     const router = useRouter();
     const token = searchParams.get("token");
 
-    const [resetPassword, {isLoading, error: apiError, isSuccess}] = useResetPasswordMutation();
+    const [resetPassword, { isLoading, error: apiError, isSuccess }] = useResetPasswordMutation();
     const [localError, setLocalError] = useState<string>("");
     const [showPassword, setShowPassword] = useState(false);
 
     const {
         register,
         handleSubmit,
-        formState: {errors},
+        formState: { errors },
     } = useForm<ResetPasswordForm>();
 
     useEffect(() => {
@@ -53,7 +53,7 @@ function ResetPasswordContent() {
                 token,
                 newPassword: data.newPassword,
             }).unwrap();
-        } catch (err: any) {
+        } catch (err) {
             console.error("Password reset failed:", err);
         }
     };
@@ -67,7 +67,7 @@ function ResetPasswordContent() {
                         <CardHeader className="space-y-4">
                             <div
                                 className="mx-auto flex h-20 w-20 items-center justify-center rounded-full border-4 border-green-50 bg-gradient-to-br from-green-100 to-green-200 shadow-lg">
-                                <CheckCircle2 className="h-10 w-10 text-green-600"/>
+                                <CheckCircle2 className="h-10 w-10 text-green-600" />
                             </div>
                             <CardTitle
                                 className="text-center bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-3xl font-bold text-transparent">
@@ -102,7 +102,7 @@ function ResetPasswordContent() {
                     <CardHeader className="space-y-4">
                         <div
                             className="mx-auto flex h-20 w-20 items-center justify-center rounded-full border-4 border-blue-50 bg-gradient-to-br from-blue-100 to-blue-200 shadow-lg">
-                            <KeyRound className="h-10 w-10 text-blue-600"/>
+                            <KeyRound className="h-10 w-10 text-blue-600" />
                         </div>
                         <CardTitle
                             className="text-center bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-3xl font-bold text-transparent">
@@ -115,7 +115,7 @@ function ResetPasswordContent() {
                     <CardContent>
                         {!token && (
                             <Alert variant="destructive" className="mb-4">
-                                <AlertTriangle className="h-4 w-4"/>
+                                <AlertTriangle className="h-4 w-4" />
                                 <AlertDescription>
                                     Invalid or missing reset token. Please request a new password reset.
                                 </AlertDescription>
@@ -152,7 +152,7 @@ function ResetPasswordContent() {
                                         onClick={() => setShowPassword(!showPassword)}
                                         className="absolute top-1/2 right-3 -translate-y-1/2 transform text-gray-500 hover:text-gray-700"
                                     >
-                                        {showPassword ? <EyeOff className="h-4 w-4"/> : <Eye className="h-4 w-4"/>}
+                                        {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                                     </button>
                                 </div>
                                 {errors.newPassword && (
@@ -162,7 +162,7 @@ function ResetPasswordContent() {
 
                             {(localError || apiError) && (
                                 <Alert variant="destructive">
-                                    <AlertTriangle className="h-4 w-4"/>
+                                    <AlertTriangle className="h-4 w-4" />
                                     <AlertDescription className="m-0 p-0">
                                         {localError ||
                                             (apiError && "data" in apiError && typeof apiError.data === "object" && apiError.data && "message" in apiError.data
@@ -205,7 +205,7 @@ function ResetPasswordFallback() {
                     <CardHeader className="space-y-4">
                         <div
                             className="mx-auto flex h-20 w-20 animate-pulse items-center justify-center rounded-full border-4 border-blue-50 bg-gradient-to-br from-blue-100 to-blue-200 shadow-lg">
-                            <Shield className="h-10 w-10 text-blue-600"/>
+                            <Shield className="h-10 w-10 text-blue-600" />
                         </div>
                         <CardTitle
                             className="text-center bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-3xl font-bold text-transparent">
@@ -223,8 +223,8 @@ function ResetPasswordFallback() {
 
 export default function ResetPasswordPage() {
     return (
-        <Suspense fallback={<ResetPasswordFallback/>}>
-            <ResetPasswordContent/>
+        <Suspense fallback={<ResetPasswordFallback />}>
+            <ResetPasswordContent />
         </Suspense>
     );
 }

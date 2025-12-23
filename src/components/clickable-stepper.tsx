@@ -1,6 +1,6 @@
-import {Progress} from "@/components/ui/progress";
-import {cn} from "@/lib/utils";
-import {Check} from "lucide-react";
+import { Progress } from "@/components/ui/progress";
+import { cn } from "@/lib/utils";
+import { Check } from "lucide-react";
 
 
 interface ClickableStepperProps {
@@ -10,10 +10,10 @@ interface ClickableStepperProps {
 }
 
 export const ClickableStepper = ({
-                                     steps = [],
-                                     currentStep = 0,
-                                     onStepChange
-                                 }: ClickableStepperProps) => {
+    steps = [],
+    currentStep = 0,
+    onStepChange
+}: ClickableStepperProps) => {
 
     // Calculate progress percentage based on current step index
     // e.g. 3 steps: Step 0 = 0%, Step 1 = 50%, Step 2 = 100%
@@ -26,14 +26,13 @@ export const ClickableStepper = ({
                 {/* Background Progress Bar */}
                 {/* We use absolute positioning to place it behind the buttons */}
                 <div className="absolute left-0 top-1/2 transform -translate-y-1/2 w-full -z-0 px-1">
-                    <Progress value={progressValue} className="h-[3px]"/>
+                    <Progress value={progressValue} className="h-[3px]" />
                 </div>
 
                 {/* Step Buttons */}
                 {steps.map((step, index) => {
                     const isActive = index === currentStep;
                     const isCompleted = index < currentStep;
-                    const isLast = index === steps.length - 1;
 
                     return (
                         <button
@@ -50,7 +49,7 @@ export const ClickableStepper = ({
                             {/* Show Checkmark if completed, otherwise show number */}
                             <span className="text-sm font-semibold">
                                 {isCompleted ? (
-                                    <Check className="w-5 h-5"/>
+                                    <Check className="w-5 h-5" />
                                 ) : (
                                     <span>{index + 1}</span>
                                 )}
@@ -62,7 +61,7 @@ export const ClickableStepper = ({
                                     "text-xs font-medium transition-colors duration-300",
                                     isActive ? "text-slate-900 dark:text-slate-50" : "text-slate-500"
                                 )}>
-                                  {step}
+                                    {step}
                                 </span>
                             </div>
                         </button>

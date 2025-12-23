@@ -24,7 +24,7 @@ export default function AdminAdDetailsPage() {
     const [rejectAd, { isLoading: isRejecting }] = useRejectAdMutation();
     const [approveAd, { isLoading: isApproving }] = useApproveAdMutation();
 
-    const { data: userData, isLoading: isUserLoading } = useGetUserByIdQuery(adData?.userId!, {
+    const { data: userData, isLoading: isUserLoading } = useGetUserByIdQuery(adData?.userId ?? 0, {
         skip: !adData?.userId,
     });
 

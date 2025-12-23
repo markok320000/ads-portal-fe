@@ -1,4 +1,4 @@
-import {AdFormatDto, AdFormatType} from "@/data/adFormats";
+import { AdFormatDto, AdFormatType } from "@/data/adFormats";
 
 export const MAX_CHAR_COUNT = 500;
 
@@ -8,7 +8,7 @@ export function calculateAdCost(format: AdFormatDto, textLength: number, views: 
     textCPM: number;
     totalCPM: number;
 } {
-    let baseCPM = format.pricePerMille;
+    const baseCPM = format.pricePerMille;
     let textCPM = 0;
 
     // Get pricing tiers. If current format is TEXT, use its tiers.

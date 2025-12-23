@@ -1,12 +1,12 @@
 "use client"
 
-import {useMemo, useState} from "react"
-import {useGetUsersQuery} from "@/store/services/adminUsersApi"
-import {SiteHeader} from "@/components/site-header"
-import {UsersTable} from "@/components/users-table"
-import {useUsersParams} from "@/hooks/use-users-params"
+import { useMemo, useState } from "react"
+import { useGetUsersQuery } from "@/store/services/adminUsersApi"
+import { SiteHeader } from "@/components/site-header"
+import { UsersTable } from "@/components/users-table"
+import { useUsersParams } from "@/hooks/use-users-params"
 
-import {sortParamsToQueryString} from "@/lib/utils"
+import { sortParamsToQueryString } from "@/lib/utils"
 
 export default function AdminUsersPage() {
     const [page, setPage] = useState(0)
@@ -21,14 +21,14 @@ export default function AdminUsersPage() {
     } = useUsersParams()
 
     // Parse search query to determine if it's a User ID or Email
-    const {userId, email} = useMemo(() => {
-        if (!searchQuery) return {userId: undefined, email: undefined}
+    const { userId, email } = useMemo(() => {
+        if (!searchQuery) return { userId: undefined, email: undefined }
 
         const isNumeric = /^\d+$/.test(searchQuery)
         if (isNumeric) {
-            return {userId: parseInt(searchQuery), email: undefined}
+            return { userId: parseInt(searchQuery), email: undefined }
         }
-        return {userId: undefined, email: searchQuery}
+        return { userId: undefined, email: searchQuery }
     }, [searchQuery])
 
     const formattedSort = useMemo(() => {
@@ -40,7 +40,7 @@ export default function AdminUsersPage() {
         }])
     }, [sort])
 
-    const {data, isLoading} = useGetUsersQuery({
+    const { data } = useGetUsersQuery({
         page,
         size,
         sort: formattedSort,
