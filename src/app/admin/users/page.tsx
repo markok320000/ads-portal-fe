@@ -1,14 +1,12 @@
 "use client"
+import {Suspense, useMemo, useState} from 'react';
+import {useGetUsersQuery} from "@/store/services/adminUsersApi"
+import {SiteHeader} from "@/components/site-header"
+import {UsersTable} from "@/components/users-table"
+import {useUsersParams} from "@/hooks/use-users-params"
+import {sortParamsToQueryString} from "@/lib/utils"
 
-import { useMemo, useState } from "react"
-import { useGetUsersQuery } from "@/store/services/adminUsersApi"
-import { SiteHeader } from "@/components/site-header"
-import { UsersTable } from "@/components/users-table"
-import { useUsersParams } from "@/hooks/use-users-params"
-
-import { sortParamsToQueryString } from "@/lib/utils"
-
-export default function AdminUsersPage() {
+function AdminUsersPageContent() {
     const [page, setPage] = useState(0)
     const [size] = useState(10)
 
@@ -21,14 +19,14 @@ export default function AdminUsersPage() {
     } = useUsersParams()
 
     // Parse search query to determine if it's a User ID or Email
-    const { userId, email } = useMemo(() => {
-        if (!searchQuery) return { userId: undefined, email: undefined }
+    const {userId, email} = useMemo(() => {
+        if (!searchQuery) return {userId: undefined, email: undefined}
 
         const isNumeric = /^\d+$/.test(searchQuery)
         if (isNumeric) {
-            return { userId: parseInt(searchQuery), email: undefined }
+            return {userId: parseInt(searchQuery), email: undefined}
         }
-        return { userId: undefined, email: searchQuery }
+        return {userId: undefined, email: searchQuery}
     }, [searchQuery])
 
     const formattedSort = useMemo(() => {
@@ -40,7 +38,7 @@ export default function AdminUsersPage() {
         }])
     }, [sort])
 
-    const { data } = useGetUsersQuery({
+    const {data} = useGetUsersQuery({
         page,
         size,
         sort: formattedSort,
@@ -52,24 +50,32 @@ export default function AdminUsersPage() {
     const totalPages = data?.totalPages || 0
 
     return (
+        <div className="w-full px-4 lg:px-6 py-4 md:gap-6 md:py-6">
+            <UsersTable
+                users={users}
+                sort={sort}
+                onSortChange={setSort}
+                searchQuery={searchQuery}
+                onSearchQueryChange={setSearchQuery}
+                onClearFilters={clearParams}
+                page={page}
+                totalPages={totalPages}
+                onPageChange={setPage}
+            />
+        </div>
+    )
+}
+
+export default function AdminUsersPage() {
+    return (
         <div className="w-full">
             <SiteHeader
                 title="Users Management"
                 description="Manage platform users and view their activity"
             />
-            <div className="w-full px-4 lg:px-6 py-4 md:gap-6 md:py-6">
-                <UsersTable
-                    users={users}
-                    sort={sort}
-                    onSortChange={setSort}
-                    searchQuery={searchQuery}
-                    onSearchQueryChange={setSearchQuery}
-                    onClearFilters={clearParams}
-                    page={page}
-                    totalPages={totalPages}
-                    onPageChange={setPage}
-                />
-            </div>
+            <Suspense fallback={<div>Loading...</div>}>
+                <AdminUsersPageContent/>
+            </Suspense>
         </div>
     )
 }

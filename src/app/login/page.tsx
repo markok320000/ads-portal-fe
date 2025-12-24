@@ -1,11 +1,11 @@
 "use client";
 
-import {useEffect} from "react";
+import {Suspense, useEffect} from "react";
 import {useRouter, useSearchParams} from "next/navigation";
 import {AuthRoute} from "@/components/route-guards";
 
 // Legacy route: redirect /login to /auth preserving the view query if present
-export default function LegacyLoginRedirect() {
+function LegacyLoginRedirectContent() {
     const router = useRouter();
     const searchParams = useSearchParams();
 
@@ -18,6 +18,14 @@ export default function LegacyLoginRedirect() {
         <AuthRoute>
             {null}
         </AuthRoute>
+    );
+}
+
+export default function LegacyLoginRedirect() {
+    return (
+        <Suspense fallback={null}>
+            <LegacyLoginRedirectContent/>
+        </Suspense>
     );
 }
 

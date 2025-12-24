@@ -1,6 +1,6 @@
 "use client";
 
-import React, {useEffect, useState} from "react";
+import React, {Suspense, useEffect, useState} from "react";
 import {LoginForm} from "@/app/login/components/LoginForm";
 import {RegisterForm} from "@/app/login/components/RegisterForm";
 import {AnimatePresence, motion} from "framer-motion";
@@ -14,7 +14,7 @@ enum AuthView {
     REGISTER = "REGISTER",
 }
 
-const AuthPage: React.FC = () => {
+const AuthPageContent: React.FC = () => {
     const searchParams = useSearchParams();
     const router = useRouter();
     const [view, setView] = useState<AuthView>(AuthView.LOGIN);
@@ -90,6 +90,14 @@ const AuthPage: React.FC = () => {
                 </div>
             </div>
         </AuthRoute>
+    );
+};
+
+const AuthPage: React.FC = () => {
+    return (
+        <Suspense fallback={<div>Loading...</div>}>
+            <AuthPageContent/>
+        </Suspense>
     );
 };
 
