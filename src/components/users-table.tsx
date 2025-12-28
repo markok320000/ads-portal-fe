@@ -81,14 +81,15 @@ export function UsersTable({
                             <TableHead>User ID</TableHead>
                             <TableHead>Role</TableHead>
                             <TableHead className="text-right">
-                                <Button
+                                Ads Purchased
+                                {/* <Button
                                     variant="ghost"
                                     onClick={() => toggleSort("totalPurchasedAdsCount")}
                                     className="-ml-4 h-8 data-[state=open]:bg-accent"
                                 >
                                     Ads Purchased
                                     <ArrowUpDown className="ml-2 h-4 w-4"/>
-                                </Button>
+                                </Button> */}
                             </TableHead>
                             <TableHead className="text-right">
                                 <Button

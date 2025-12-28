@@ -53,9 +53,7 @@ export default function UserLayout({children}: { children: ReactNode }) {
             <div className="flex h-full w-full flex-col p-4 space-y-4">
                 <Card className="flex min-h-0 flex-1 flex-col p-0 overflow-hidden">
                     <NavigationTabs tabs={tabs} activeValue={activeTabValue}>
-                        <div className="h-full w-full p-4">
-                            {children}
-                        </div>
+                        {children}
                     </NavigationTabs>
                 </Card>
             </div>
