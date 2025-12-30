@@ -139,7 +139,7 @@ export default function AdminAdDetailsPage() {
 
     return (
         <div>
-            <SiteHeader title={'Ad Campaign Details'} description={''} />
+            <SiteHeader title={adData.title} description={'Ad Campaign Details'} />
             <div className="flex flex-1 flex-col">
                 <div className="@container/main flex flex-1 flex-col gap-2">
                     <div className="flex flex-col gap-4">

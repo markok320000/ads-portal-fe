@@ -8,6 +8,7 @@ import {
     DollarSign,
     Eye,
     FileText,
+    Type,
     ImageIcon,
     Info,
     TrendingUp,
@@ -90,11 +91,23 @@ export default function AdStatusDetails({ data, className, isAdmin = false }: Ad
 
             <CardContent className="p-6 space-y-6">
                 {/* Ad Content Preview Section */}
-                {(hasMedia || hasText) && (
+                {(data.title || hasMedia || hasText) && (
                     <div className="space-y-4">
                         <div className="flex items-center gap-2 pb-2 border-b">
                             <FileText className="h-5 w-5 text-primary" />
                             <h3 className="text-lg font-semibold">Ad Content Preview</h3>
+                        </div>
+
+
+                        {/* Title Preview */}
+                        <div className="rounded-lg border bg-card p-4">
+                            <div className="flex items-center gap-2 mb-3">
+                                <Type className="h-4 w-4 text-muted-foreground" />
+                                <span className="text-sm font-medium text-muted-foreground">Ad Title</span>
+                            </div>
+                            <p className="text-lg font-medium">
+                                {data.title}
+                            </p>
                         </div>
 
                         {/* Text Content */}

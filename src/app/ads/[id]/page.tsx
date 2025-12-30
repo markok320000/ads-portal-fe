@@ -1,18 +1,18 @@
 'use client'
-import {SiteHeader} from "@/components/site-header";
-import {AdDetailsStats} from "@/app/ads/[id]/components/ad-details-stats";
-import {useGetAdByIdQuery, useGetAdDailyStatsQuery} from "@/store/services/adsApi";
-import {useParams} from "next/navigation";
-import {Card, CardContent} from "@/components/ui/card";
-import {Loader2} from "lucide-react";
+import { SiteHeader } from "@/components/site-header";
+import { AdDetailsStats } from "@/app/ads/[id]/components/ad-details-stats";
+import { useGetAdByIdQuery, useGetAdDailyStatsQuery } from "@/store/services/adsApi";
+import { useParams } from "next/navigation";
+import { Card, CardContent } from "@/components/ui/card";
+import { Loader2 } from "lucide-react";
 import AdStatusDetails from "@/app/ads/[id]/components/ad-status-details";
 
 export default function UserAdDetailsPage() {
     const params = useParams();
     const adId = Number(params.id);
 
-    const {data: adData, isLoading, error} = useGetAdByIdQuery(adId);
-    const {data: statsData} = useGetAdDailyStatsQuery({id: adId});
+    const { data: adData, isLoading, error } = useGetAdByIdQuery(adId);
+    const { data: statsData } = useGetAdDailyStatsQuery({ id: adId });
 
     if (isLoading) {
         return (
@@ -26,7 +26,7 @@ export default function UserAdDetailsPage() {
                         <Card className="m-4">
                             <CardContent className="flex items-center justify-center p-12">
                                 <div className="flex flex-col items-center gap-2">
-                                    <Loader2 className="h-8 w-8 animate-spin text-muted-foreground"/>
+                                    <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
                                     <p className="text-sm text-muted-foreground">Loading ad details...</p>
                                 </div>
                             </CardContent>
@@ -67,8 +67,8 @@ export default function UserAdDetailsPage() {
     return (
         <div>
             <SiteHeader
-                title={'Ad Campaign Details'}
-                description={''}
+                title={adData.title}
+                description={'Ad Campaign Details'}
             />
             <div className="flex flex-1 flex-col">
                 <div className="@container/main flex flex-1 flex-col gap-2">
