@@ -54,18 +54,6 @@ export const AdCard: React.FC<AdCardProps> = ({format, isSelected, onSelect, cla
       `}>
                 <CheckCircle2 className="w-6 h-6 text-indigo-600 fill-indigo-100"/>
             </div>
-
-            {/* Recommended Badge */}
-            {format.recommended && (
-                <span className={`
-          absolute -top-3 left-6 px-3 py-1 text-xs font-semibold tracking-wide uppercase rounded-full
-          ${isSelected ? 'bg-indigo-600 text-white' : 'bg-slate-800 text-white'}
-        `}>
-                    Most Popular
-                </span>
-            )}
-
-            {/* Header / Icon */}
             <div className="mb-4">
                 <div className={`
           w-12 h-12 rounded-xl flex items-center justify-center transition-colors duration-200
